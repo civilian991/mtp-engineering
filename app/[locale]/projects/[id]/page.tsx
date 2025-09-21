@@ -5,31 +5,13 @@ import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import { getDictionary } from '@/lib/dictionary'
 import { Locale } from '@/lib/i18n'
+import { getProjectById, getProjects } from '@/lib/dal/projects'
+import { Tables } from '@/types/database'
 
-interface Project {
-  id: string
-  name_en: string
-  name_ar: string
-  description_en: string
-  description_ar: string
-  location_en: string
-  location_ar: string
-  client_en: string
-  client_ar: string
-  year: string
-  duration: string
-  sector: string
-  status: 'completed' | 'ongoing' | 'planned'
-  services: string[]
-  team_size: number
-  project_value?: string
-  images: string[]
-  highlights_en: string[]
-  highlights_ar: string[]
-}
+type Project = Tables<'projects'>
 
-// Mock data - replace with database call
-const projects: Project[] = [
+// Mock data for fallback when project not in database
+const mockProjects = [
   {
     id: '1',
     name_en: 'King Abdulaziz International Airport Expansion',
@@ -125,10 +107,17 @@ const projects: Project[] = [
   }
 ]
 
-async function getProject(id: string): Promise<Project | null> {
-  // In production, this would fetch from database
-  return projects.find(p => p.id === id) || null
+async function getProject(id: string) {
+  // First try to fetch from database
+  const dbProject = await getProjectById(id)
+  if (dbProject) return dbProject
+
+  // Fallback to mock data for legacy projects
+  return mockProjects.find((p: any) => p.id === id) || null
 }
+
+// For now, we'll use dynamic rendering for project pages
+// generateStaticParams would need a different approach without cookies
 
 export async function generateMetadata({
   params,
@@ -144,15 +133,15 @@ export async function generateMetadata({
     }
   }
 
-  const title = locale === 'ar' ? project.name_ar : project.name_en
-  const description = locale === 'ar' ? project.description_ar : project.description_en
+  const title = (locale === 'ar' ? project.name_ar || project.name_en : project.name_en || project.name_ar) || ''
+  const description = (locale === 'ar' ? project.description_ar || project.description_en : project.description_en || project.description_ar) || ''
 
   return {
     title: `${title} | MTP Engineering`,
-    description,
+    description: description || undefined,
     openGraph: {
       title,
-      description,
+      description: description || undefined,
       type: 'article',
     },
   }
@@ -185,17 +174,21 @@ export default async function ProjectDetailPage({
             </Button>
           </Link>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            {isRTL ? project.name_ar : project.name_en}
+            {isRTL ? project.name_ar || project.name_en : project.name_en || project.name_ar}
           </h1>
           <div className="flex flex-wrap gap-4 text-white/90">
-            <span className="flex items-center">
-              <MapPin className="h-5 w-5 mr-2 rtl:ml-2 rtl:mr-0" />
-              {isRTL ? project.location_ar : project.location_en}
-            </span>
-            <span className="flex items-center">
-              <Calendar className="h-5 w-5 mr-2 rtl:ml-2 rtl:mr-0" />
-              {project.year}
-            </span>
+            {(project.location_en || project.location_ar) && (
+              <span className="flex items-center">
+                <MapPin className="h-5 w-5 mr-2 rtl:ml-2 rtl:mr-0" />
+                {isRTL ? project.location_ar || project.location_en : project.location_en || project.location_ar}
+              </span>
+            )}
+            {project.year && (
+              <span className="flex items-center">
+                <Calendar className="h-5 w-5 mr-2 rtl:ml-2 rtl:mr-0" />
+                {project.year}
+              </span>
+            )}
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${
               project.status === 'completed'
                 ? 'bg-green-500/20 text-green-100'
@@ -223,50 +216,64 @@ export default async function ProjectDetailPage({
                   {isRTL ? 'نظرة عامة على المشروع' : 'Project Overview'}
                 </h2>
                 <p className="text-secondary-600 leading-relaxed">
-                  {isRTL ? project.description_ar : project.description_en}
+                  {isRTL ? project.description_ar || project.description_en : project.description_en || project.description_ar}
                 </p>
               </div>
 
-              {/* Project Images */}
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-2xl font-bold text-secondary-900 mb-4">
-                  {isRTL ? 'صور المشروع' : 'Project Images'}
-                </h2>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {project.images.map((image, index) => (
-                    <div key={index} className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg h-48"></div>
-                  ))}
+              {/* Project Images - Only show if we have images */}
+              {'image_url' in project && project.image_url && (
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h2 className="text-2xl font-bold text-secondary-900 mb-4">
+                    {isRTL ? 'صور المشروع' : 'Project Images'}
+                  </h2>
+                  <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg h-48"></div>
                 </div>
-              </div>
+              )}
 
-              {/* Key Highlights */}
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-2xl font-bold text-secondary-900 mb-4">
-                  {isRTL ? 'أبرز النقاط' : 'Key Highlights'}
-                </h2>
-                <ul className="space-y-3">
-                  {(isRTL ? project.highlights_ar : project.highlights_en).map((highlight, index) => (
-                    <li key={index} className="flex items-start">
-                      <Award className="h-5 w-5 text-primary-600 mr-3 rtl:ml-3 rtl:mr-0 mt-0.5 flex-shrink-0" />
-                      <span className="text-secondary-600">{highlight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Services Provided */}
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-2xl font-bold text-secondary-900 mb-4">
-                  {isRTL ? 'الخدمات المقدمة' : 'Services Provided'}
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {project.services.map((service, index) => (
-                    <span key={index} className="px-4 py-2 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">
-                      {service}
-                    </span>
-                  ))}
+              {/* Key Features/Highlights */}
+              {(('features' in project && project.features) || ('highlights_en' in project && project.highlights_en)) && (
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h2 className="text-2xl font-bold text-secondary-900 mb-4">
+                    {isRTL ? 'المميزات الرئيسية' : 'Key Features'}
+                  </h2>
+                  <ul className="space-y-3">
+                    {'features' in project && project.features ? (
+                      (Array.isArray(project.features) ? project.features : []).map((feature: any, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <Award className="h-5 w-5 text-primary-600 mr-3 rtl:ml-3 rtl:mr-0 mt-0.5 flex-shrink-0" />
+                          <span className="text-secondary-600">
+                            {typeof feature === 'object' ? (isRTL ? feature.ar || feature.en : feature.en || feature.ar) : feature}
+                          </span>
+                        </li>
+                      ))
+                    ) : (
+                      // For mock data with highlights_en/highlights_ar
+                      ((isRTL ? (project as any).highlights_ar : (project as any).highlights_en) || []).map((highlight: string, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <Award className="h-5 w-5 text-primary-600 mr-3 rtl:ml-3 rtl:mr-0 mt-0.5 flex-shrink-0" />
+                          <span className="text-secondary-600">{highlight}</span>
+                        </li>
+                      ))
+                    )}
+                  </ul>
                 </div>
-              </div>
+              )}
+
+              {/* Services Provided - Only show if we have services */}
+              {'services' in project && project.services && Array.isArray(project.services) && project.services.length > 0 && (
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h2 className="text-2xl font-bold text-secondary-900 mb-4">
+                    {isRTL ? 'الخدمات المقدمة' : 'Services Provided'}
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {project.services.map((service: any, index: number) => (
+                      <span key={index} className="px-4 py-2 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">
+                        {typeof service === 'object' ? (isRTL ? service.ar || service.en : service.en || service.ar) : service}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Sidebar */}
@@ -276,28 +283,36 @@ export default async function ProjectDetailPage({
                   {isRTL ? 'تفاصيل المشروع' : 'Project Details'}
                 </h3>
                 <div className="space-y-4">
-                  <div className="pb-4 border-b">
-                    <p className="text-sm text-secondary-500 mb-1">{isRTL ? 'العميل' : 'Client'}</p>
-                    <p className="font-semibold text-secondary-900">
-                      {isRTL ? project.client_ar : project.client_en}
-                    </p>
-                  </div>
-                  <div className="pb-4 border-b">
-                    <p className="text-sm text-secondary-500 mb-1">{isRTL ? 'المدة' : 'Duration'}</p>
-                    <p className="font-semibold text-secondary-900">{project.duration}</p>
-                  </div>
-                  <div className="pb-4 border-b">
-                    <p className="text-sm text-secondary-500 mb-1">{isRTL ? 'القطاع' : 'Sector'}</p>
-                    <p className="font-semibold text-secondary-900 capitalize">{project.sector.replace('_', ' ')}</p>
-                  </div>
-                  <div className="pb-4 border-b">
-                    <p className="text-sm text-secondary-500 mb-1">{isRTL ? 'حجم الفريق' : 'Team Size'}</p>
-                    <p className="font-semibold text-secondary-900">
-                      <Users className="inline h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-secondary-400" />
-                      {project.team_size} {isRTL ? 'عضو' : 'members'}
-                    </p>
-                  </div>
-                  {project.project_value && (
+                  {(project.client_en || project.client_ar) && (
+                    <div className="pb-4 border-b">
+                      <p className="text-sm text-secondary-500 mb-1">{isRTL ? 'العميل' : 'Client'}</p>
+                      <p className="font-semibold text-secondary-900">
+                        {isRTL ? project.client_ar || project.client_en : project.client_en || project.client_ar}
+                      </p>
+                    </div>
+                  )}
+                  {project.year && (
+                    <div className="pb-4 border-b">
+                      <p className="text-sm text-secondary-500 mb-1">{isRTL ? 'السنة' : 'Year'}</p>
+                      <p className="font-semibold text-secondary-900">{project.year}</p>
+                    </div>
+                  )}
+                  {project.sector && (
+                    <div className="pb-4 border-b">
+                      <p className="text-sm text-secondary-500 mb-1">{isRTL ? 'القطاع' : 'Sector'}</p>
+                      <p className="font-semibold text-secondary-900 capitalize">{project.sector.replace(/_/g, ' ')}</p>
+                    </div>
+                  )}
+                  {'team_size' in project && project.team_size && (
+                    <div className="pb-4 border-b">
+                      <p className="text-sm text-secondary-500 mb-1">{isRTL ? 'حجم الفريق' : 'Team Size'}</p>
+                      <p className="font-semibold text-secondary-900">
+                        <Users className="inline h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-secondary-400" />
+                        {project.team_size} {isRTL ? 'عضو' : 'members'}
+                      </p>
+                    </div>
+                  )}
+                  {'project_value' in project && project.project_value && (
                     <div className="pb-4 border-b">
                       <p className="text-sm text-secondary-500 mb-1">{isRTL ? 'قيمة المشروع' : 'Project Value'}</p>
                       <p className="font-semibold text-secondary-900">{project.project_value}</p>
