@@ -70,7 +70,7 @@ export default function ProjectsSection({ locale, dictionary, projects: dbProjec
           {displayProjects.slice(0, 6).map((project) => (
             <Card key={project.id} variant="elevated" className="overflow-hidden group hover:shadow-xl transition-shadow">
               <div className="aspect-w-16 aspect-h-9 bg-secondary-200 relative h-48">
-                {project.image_url ? (
+                {'image_url' in project && project.image_url ? (
                   <img
                     src={project.image_url}
                     alt={locale === 'ar' ? project.name_ar || project.name_en : project.name_en || project.name_ar}
