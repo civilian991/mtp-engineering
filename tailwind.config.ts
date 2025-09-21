@@ -9,25 +9,38 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Primary Colors - Engineering Navy/Slate
+        // Primary Colors - MTP Gold Theme
         primary: {
-          50: '#F8FAFC',    // Background white
-          100: '#F1F5F9',   // Near white
-          200: '#E2E8F0',   // Very light slate
-          300: '#CBD5E1',   // Lighter slate
-          400: '#94A3B8',   // Light slate
-          500: '#64748B',   // Slate - Body text
-          600: '#475569',   // Medium slate
-          700: '#334155',   // Dark slate
-          800: '#1E293B',   // Navy - Primary text
-          900: '#0F172A',   // Deep Navy - Headers
+          50: '#FDFCF8',    // Background white with gold tint
+          100: '#FAF8F2',   // Near white with warm tint
+          200: '#F5F1E5',   // Very light gold
+          300: '#E8E0CC',   // Lighter gold
+          400: '#D4C597',   // Light gold
+          500: '#B6A054',   // MTP Gold - Primary brand color
+          600: '#9F8A3F',   // Medium gold
+          700: '#7A6A2E',   // Dark gold
+          800: '#5C5023',   // Deep gold
+          900: '#3D3518',   // Darkest gold
         },
-        // Accent Colors - Engineering Blue
+        // Accent Colors - MTP Gold Variations
         accent: {
-          100: '#E0F2FE',   // Light background
-          400: '#38BDF8',   // Active state
-          500: '#0EA5E9',   // Hover state
-          600: '#0284C7',   // Primary CTA
+          100: '#FAF8F2',   // Light background
+          400: '#C4B05C',   // Active state
+          500: '#B6A054',   // Hover state (MTP Gold)
+          600: '#9F8A3F',   // Primary CTA
+        },
+        // Secondary Colors - Dark charcoal for text
+        secondary: {
+          50: '#FAFAFA',    // Background white
+          100: '#F5F5F5',   // Near white
+          200: '#E5E5E5',   // Very light gray
+          300: '#D4D4D4',   // Lighter gray
+          400: '#A3A3A3',   // Light gray
+          500: '#737373',   // Gray - Body text
+          600: '#525252',   // Medium gray
+          700: '#404040',   // Dark gray
+          800: '#262626',   // Charcoal - Primary text
+          900: '#171717',   // Deep Charcoal - Headers
         },
         // Semantic Colors
         success: '#22C55E',
