@@ -10,14 +10,25 @@ interface HeroSectionProps {
 
 export default function HeroSection({ locale, dictionary }: HeroSectionProps) {
   return (
-    <section className="relative bg-gradient-to-br from-primary-50 via-white to-primary-50 min-h-[700px] flex items-center">
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+    <section className="relative min-h-[700px] flex items-center overflow-hidden">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url(/images/hero-bg.jpg)' }}
+      />
+
+      {/* Gradient Overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
+
+      {/* Additional gold overlay for brand consistency */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 to-transparent"></div>
+
       <div className="container mx-auto px-4 sm:px-8 lg:px-16 py-24 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
-          <h1 className="h1 mb-6 animate-fade-in">
+          <h1 className="h1 mb-6 animate-fade-in text-white">
             {dictionary.hero.title}
           </h1>
-          <p className="text-xl md:text-2xl text-primary-600 mb-10 animate-slide-up max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-primary-200 mb-10 animate-slide-up max-w-3xl mx-auto">
             {dictionary.hero.subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: '0.2s' }}>
@@ -37,26 +48,26 @@ export default function HeroSection({ locale, dictionary }: HeroSectionProps) {
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20">
             <div className="text-center group hover:transform hover:-translate-y-1 transition-transform">
-              <div className="text-4xl font-bold text-accent-600 mb-2">44+</div>
-              <div className="caption">
+              <div className="text-4xl font-bold text-primary-400 mb-2">44+</div>
+              <div className="text-sm text-primary-200 uppercase tracking-wider">
                 {locale === 'ar' ? 'سنوات خبرة' : 'Years Experience'}
               </div>
             </div>
             <div className="text-center group hover:transform hover:-translate-y-1 transition-transform">
-              <div className="text-4xl font-bold text-accent-600 mb-2">100+</div>
-              <div className="caption">
+              <div className="text-4xl font-bold text-primary-400 mb-2">100+</div>
+              <div className="text-sm text-primary-200 uppercase tracking-wider">
                 {locale === 'ar' ? 'مشروع منجز' : 'Projects Completed'}
               </div>
             </div>
             <div className="text-center group hover:transform hover:-translate-y-1 transition-transform">
-              <div className="text-4xl font-bold text-accent-600 mb-2">180</div>
-              <div className="caption">
+              <div className="text-4xl font-bold text-primary-400 mb-2">180</div>
+              <div className="text-sm text-primary-200 uppercase tracking-wider">
                 {locale === 'ar' ? 'موظف محترف' : 'Professional Staff'}
               </div>
             </div>
             <div className="text-center group hover:transform hover:-translate-y-1 transition-transform">
-              <div className="text-4xl font-bold text-accent-600 mb-2">500M+</div>
-              <div className="caption">
+              <div className="text-4xl font-bold text-primary-400 mb-2">500M+</div>
+              <div className="text-sm text-primary-200 uppercase tracking-wider">
                 {locale === 'ar' ? 'ريال قيمة المشاريع' : 'SAR Project Value'}
               </div>
             </div>
