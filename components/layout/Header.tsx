@@ -30,10 +30,11 @@ export default function Header({ locale, dictionary }: HeaderProps) {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link href={`/${locale}`} className="flex-shrink-0 flex items-center group">
-              <span className="text-3xl font-bold text-accent-600 group-hover:text-accent-500 transition-colors">MTP</span>
-              <span className="text-lg font-medium text-primary-700 ml-2 rtl:mr-2 rtl:ml-0">
-                {locale === 'ar' ? 'الهندسية' : 'Engineering'}
-              </span>
+              <img
+                src="/images/mtp-logo-professional.png"
+                alt="MTP Engineering"
+                className="h-20 w-auto object-contain py-2"
+              />
             </Link>
           </div>
 

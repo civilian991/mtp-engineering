@@ -199,7 +199,15 @@ export default function ProjectsClient({ locale, dictionary, initialProjects, se
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProjects.map((project) => (
           <Card key={project.id} variant="bordered" className="hover:shadow-lg transition-shadow">
-            <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg mb-4 h-48"></div>
+            <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg mb-4 h-48 relative overflow-hidden">
+              {project.image_url && (
+                <img
+                  src={project.image_url}
+                  alt={locale === 'ar' ? project.name_ar || project.name_en : project.name_en || project.name_ar}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              )}
+            </div>
 
             <h3 className="text-xl font-semibold text-secondary-900 mb-3">
               {locale === 'ar' ? project.name_ar || project.name_en : project.name_en || project.name_ar}

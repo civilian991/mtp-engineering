@@ -31,9 +31,13 @@ export default function Footer({ locale, dictionary }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <div className="flex items-center mb-4">
-              <span className="text-2xl font-bold text-accent-500">MTP</span>
-              <span className="text-lg font-medium text-primary-300 ml-2">
+            <div className="mb-4">
+              <img
+                src="/images/mtp-logo-white-bg.png"
+                alt="MTP Engineering"
+                className="h-20 w-auto object-contain mb-2"
+              />
+              <span className="text-sm font-medium text-primary-300">
                 {locale === 'ar' ? 'منصور للتجارة والمشاريع' : 'Mansour Trade & Projects'}
               </span>
             </div>

@@ -70,8 +70,15 @@ export default function ProjectsSection({ locale, dictionary, projects: dbProjec
           {displayProjects.slice(0, 6).map((project) => (
             <Card key={project.id} variant="elevated" className="overflow-hidden group hover:shadow-xl transition-shadow">
               <div className="aspect-w-16 aspect-h-9 bg-secondary-200 relative h-48">
-                {/* Placeholder for image */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-400 to-primary-600 opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                {project.image_url ? (
+                  <img
+                    src={project.image_url}
+                    alt={locale === 'ar' ? project.name_ar || project.name_en : project.name_en || project.name_ar}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-400 to-primary-600 opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                )}
                 {project.sector && (
                   <div className="absolute top-4 right-4 rtl:left-4 rtl:right-auto">
                     <span className="bg-white px-3 py-1 rounded-full text-xs font-medium text-primary-600">
