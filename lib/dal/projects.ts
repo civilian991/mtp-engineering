@@ -138,8 +138,8 @@ export const getProjectYears = cache(async () => {
     return []
   }
 
-  // Get unique years
-  const years = [...new Set(data?.map(p => p.year).filter(Boolean) || [])]
+  // Get unique years - filter out nulls and ensure number array
+  const years = [...new Set(data?.map(p => p.year).filter((y): y is number => y !== null) || [])]
   return years
 })
 
@@ -157,8 +157,8 @@ export const getProjectSectors = cache(async () => {
     return []
   }
 
-  // Get unique sectors
-  const sectors = [...new Set(data?.map(p => p.sector).filter(Boolean) || [])]
+  // Get unique sectors - filter out nulls and ensure string array
+  const sectors = [...new Set(data?.map(p => p.sector).filter((s): s is string => Boolean(s)) || [])]
   return sectors
 })
 

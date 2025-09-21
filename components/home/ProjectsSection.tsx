@@ -4,10 +4,14 @@ import { MapPin, Calendar, ArrowRight } from 'lucide-react'
 import Card, { CardContent, CardTitle } from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import { Locale } from '@/lib/i18n'
+import { Tables } from '@/types/database'
+
+type Project = Tables<'projects'>
 
 interface ProjectsSectionProps {
   locale: Locale
   dictionary: any
+  projects?: Project[]
 }
 
 // Mock data - will be replaced with Supabase query
@@ -44,7 +48,10 @@ const featuredProjects = [
   },
 ]
 
-export default function ProjectsSection({ locale, dictionary }: ProjectsSectionProps) {
+export default function ProjectsSection({ locale, dictionary, projects: dbProjects }: ProjectsSectionProps) {
+  // Use database projects if available, otherwise fall back to mock data
+  const displayProjects = dbProjects && dbProjects.length > 0 ? dbProjects : featuredProjects
+
   return (
     <section className="py-16 bg-secondary-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,30 +67,36 @@ export default function ProjectsSection({ locale, dictionary }: ProjectsSectionP
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredProjects.map((project) => (
+          {displayProjects.slice(0, 6).map((project) => (
             <Card key={project.id} variant="elevated" className="overflow-hidden group hover:shadow-xl transition-shadow">
               <div className="aspect-w-16 aspect-h-9 bg-secondary-200 relative h-48">
                 {/* Placeholder for image */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-400 to-primary-600 opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                <div className="absolute top-4 right-4 rtl:left-4 rtl:right-auto">
-                  <span className="bg-white px-3 py-1 rounded-full text-xs font-medium text-primary-600">
-                    {project.sector}
-                  </span>
-                </div>
+                {project.sector && (
+                  <div className="absolute top-4 right-4 rtl:left-4 rtl:right-auto">
+                    <span className="bg-white px-3 py-1 rounded-full text-xs font-medium text-primary-600">
+                      {typeof project.sector === 'string' ? project.sector.replace(/_/g, ' ') : project.sector}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="p-6">
                 <CardTitle className="mb-3 group-hover:text-primary-600 transition-colors line-clamp-2">
-                  {locale === 'ar' ? project.name_ar : project.name_en}
+                  {locale === 'ar' ? project.name_ar || project.name_en : project.name_en || project.name_ar}
                 </CardTitle>
                 <div className="flex items-center gap-4 text-sm text-secondary-500 mb-4">
-                  <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
-                    {locale === 'ar' ? project.location_ar : project.location_en}
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
-                    {project.year}
-                  </div>
+                  {(project.location_en || project.location_ar) && (
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
+                      {locale === 'ar' ? project.location_ar || project.location_en : project.location_en || project.location_ar}
+                    </div>
+                  )}
+                  {project.year && (
+                    <div className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-1 rtl:ml-1 rtl:mr-0" />
+                      {project.year}
+                    </div>
+                  )}
                 </div>
                 <Link href={`/${locale}/projects/${project.id}`}>
                   <span className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium">

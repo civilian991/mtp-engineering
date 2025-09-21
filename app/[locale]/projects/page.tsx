@@ -1,6 +1,7 @@
 import ProjectsClient from './projects-client'
 import { getDictionary } from '@/lib/dictionary'
 import { Locale } from '@/lib/i18n'
+import { getProjects, getProjectSectors, getProjectYears } from '@/lib/dal/projects'
 import type { Metadata } from 'next'
 
 type Props = {
@@ -22,6 +23,11 @@ export default async function ProjectsPage({ params }: Props) {
   const { locale } = await params
   const dictionary = await getDictionary(locale as Locale)
 
+  // Fetch data from database
+  const projects = await getProjects()
+  const sectors = await getProjectSectors()
+  const years = await getProjectYears()
+
   return (
     <div className="min-h-screen bg-secondary-50">
       <div className="bg-white shadow-sm">
@@ -36,7 +42,13 @@ export default async function ProjectsPage({ params }: Props) {
           </p>
         </div>
       </div>
-      <ProjectsClient locale={locale as Locale} dictionary={dictionary} />
+      <ProjectsClient
+        locale={locale as Locale}
+        dictionary={dictionary}
+        initialProjects={projects}
+        sectors={sectors}
+        years={years}
+      />
     </div>
   )
 }

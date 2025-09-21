@@ -8,10 +8,16 @@ import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
 import { Locale } from '@/lib/i18n'
+import { Tables } from '@/types/database'
+
+type Project = Tables<'projects'>
 
 interface ProjectsClientProps {
   locale: Locale
   dictionary: any
+  initialProjects: Project[]
+  sectors: string[]
+  years: number[]
 }
 
 // Mock data - will be replaced with Supabase data
@@ -62,18 +68,24 @@ const mockProjects = [
   },
 ]
 
-export default function ProjectsClient({ locale, dictionary }: ProjectsClientProps) {
+export default function ProjectsClient({ locale, dictionary, initialProjects, sectors = [], years = [] }: ProjectsClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedSector, setSelectedSector] = useState('all')
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedYear, setSelectedYear] = useState('all')
   const [showLegacy, setShowLegacy] = useState(true)
+  const [projects] = useState<Project[]>(initialProjects || [])
 
   const sectorOptions = [
     { value: 'all', label: locale === 'ar' ? 'جميع القطاعات' : 'All Sectors' },
-    { value: 'government', label: locale === 'ar' ? 'القطاع الحكومي' : 'Government' },
-    { value: 'infrastructure', label: locale === 'ar' ? 'البنية التحتية' : 'Infrastructure' },
-    { value: 'real_estate', label: locale === 'ar' ? 'العقارات' : 'Real Estate' },
+    ...(sectors.length > 0 ? sectors.map(sector => ({
+      value: sector,
+      label: sector.charAt(0).toUpperCase() + sector.slice(1).replace(/_/g, ' ')
+    })) : [
+      { value: 'government', label: locale === 'ar' ? 'القطاع الحكومي' : 'Government' },
+      { value: 'infrastructure', label: locale === 'ar' ? 'البنية التحتية' : 'Infrastructure' },
+      { value: 'real_estate', label: locale === 'ar' ? 'العقارات' : 'Real Estate' },
+    ])
   ]
 
   const statusOptions = [
@@ -85,18 +97,25 @@ export default function ProjectsClient({ locale, dictionary }: ProjectsClientPro
 
   const yearOptions = [
     { value: 'all', label: locale === 'ar' ? 'جميع السنوات' : 'All Years' },
-    { value: '2024', label: '2024' },
-    { value: '2023', label: '2023' },
-    { value: '2022', label: '2022' },
-    { value: '2021', label: '2021' },
+    ...(years.length > 0 ? years.map(year => ({
+      value: year.toString(),
+      label: year.toString()
+    })) : [
+      { value: '2024', label: '2024' },
+      { value: '2023', label: '2023' },
+      { value: '2022', label: '2022' },
+      { value: '2021', label: '2021' },
+    ]),
     { value: 'legacy', label: locale === 'ar' ? 'مشاريع سابقة (قبل 2020)' : 'Legacy (Before 2020)' },
   ]
 
   const filteredProjects = useMemo(() => {
-    return mockProjects.filter((project) => {
+    return projects.filter((project) => {
       const nameMatch = searchQuery === '' ||
-        project.name_en.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.name_ar.includes(searchQuery)
+        project.name_en?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.name_ar?.includes(searchQuery) ||
+        project.location_en?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.location_ar?.includes(searchQuery)
 
       const sectorMatch = selectedSector === 'all' || project.sector === selectedSector
       const statusMatch = selectedStatus === 'all' || project.status === selectedStatus
@@ -104,17 +123,17 @@ export default function ProjectsClient({ locale, dictionary }: ProjectsClientPro
       let yearMatch = true
       if (selectedYear !== 'all') {
         if (selectedYear === 'legacy') {
-          yearMatch = parseInt(project.year) < 2020
+          yearMatch = project.year ? project.year < 2020 : false
         } else {
-          yearMatch = project.year === selectedYear
+          yearMatch = project.year?.toString() === selectedYear
         }
       }
 
-      const legacyMatch = showLegacy || !project.is_legacy
+      const legacyMatch = showLegacy || (project.year ? project.year >= 2020 : true)
 
       return nameMatch && sectorMatch && statusMatch && yearMatch && legacyMatch
     })
-  }, [searchQuery, selectedSector, selectedStatus, selectedYear, showLegacy])
+  }, [projects, searchQuery, selectedSector, selectedStatus, selectedYear, showLegacy])
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -171,8 +190,8 @@ export default function ProjectsClient({ locale, dictionary }: ProjectsClientPro
 
         <div className="text-sm text-secondary-600">
           {locale === 'ar'
-            ? `عرض ${filteredProjects.length} مشروع من أصل ${mockProjects.length}`
-            : `Showing ${filteredProjects.length} of ${mockProjects.length} projects`}
+            ? `عرض ${filteredProjects.length} مشروع من أصل ${projects.length}`
+            : `Showing ${filteredProjects.length} of ${projects.length} projects`}
         </div>
       </div>
 
@@ -183,24 +202,30 @@ export default function ProjectsClient({ locale, dictionary }: ProjectsClientPro
             <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg mb-4 h-48"></div>
 
             <h3 className="text-xl font-semibold text-secondary-900 mb-3">
-              {locale === 'ar' ? project.name_ar : project.name_en}
+              {locale === 'ar' ? project.name_ar || project.name_en : project.name_en || project.name_ar}
             </h3>
 
             <div className="space-y-2 text-sm text-secondary-600">
-              <div className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-secondary-400" />
-                {locale === 'ar' ? project.location_ar : project.location_en}
-              </div>
+              {(project.location_en || project.location_ar) && (
+                <div className="flex items-center">
+                  <MapPin className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-secondary-400" />
+                  {locale === 'ar' ? project.location_ar || project.location_en : project.location_en || project.location_ar}
+                </div>
+              )}
 
-              <div className="flex items-center">
-                <Calendar className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-secondary-400" />
-                {project.year}
-              </div>
+              {project.year && (
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-secondary-400" />
+                  {project.year}
+                </div>
+              )}
 
-              <div className="flex items-center">
-                <Building className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-secondary-400" />
-                {sectorOptions.find(s => s.value === project.sector)?.label}
-              </div>
+              {project.sector && (
+                <div className="flex items-center">
+                  <Building className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-secondary-400" />
+                  {sectorOptions.find(s => s.value === project.sector)?.label || project.sector}
+                </div>
+              )}
             </div>
 
             <div className="mt-4 flex items-center justify-between">
@@ -211,10 +236,10 @@ export default function ProjectsClient({ locale, dictionary }: ProjectsClientPro
                   ? 'bg-warning/10 text-warning'
                   : 'bg-info/10 text-info'
               }`}>
-                {statusOptions.find(s => s.value === project.status)?.label}
+                {statusOptions.find(s => s.value === project.status)?.label || project.status || 'planned'}
               </span>
 
-              {project.is_legacy && (
+              {project.year && project.year < 2000 && (
                 <span className="text-xs text-secondary-500 italic">
                   {locale === 'ar' ? 'مشروع سابق' : 'Legacy Project'}
                 </span>

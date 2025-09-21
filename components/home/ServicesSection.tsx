@@ -2,10 +2,14 @@ import Link from 'next/link'
 import { Zap, Wind, Droplet, Flame, Wifi, ClipboardCheck } from 'lucide-react'
 import Card, { CardContent, CardTitle } from '@/components/ui/Card'
 import { Locale } from '@/lib/i18n'
+import { Tables } from '@/types/database'
+
+type Service = Tables<'services'>
 
 interface ServicesSectionProps {
   locale: Locale
   dictionary: any
+  services?: Service[]
 }
 
 const serviceIcons = {
@@ -44,15 +48,22 @@ const serviceDescriptions = {
   }
 }
 
-export default function ServicesSection({ locale, dictionary }: ServicesSectionProps) {
-  const services = [
-    { key: 'electrical', name: dictionary.services.electrical },
-    { key: 'hvac', name: dictionary.services.hvac },
-    { key: 'plumbing', name: dictionary.services.plumbing },
-    { key: 'fire_fighting', name: dictionary.services.fire_fighting },
-    { key: 'low_current', name: dictionary.services.low_current },
-    { key: 'project_management', name: dictionary.services.project_management },
-  ]
+export default function ServicesSection({ locale, dictionary, services: dbServices }: ServicesSectionProps) {
+  // Use database services if available, otherwise fall back to hardcoded
+  const services = dbServices && dbServices.length > 0
+    ? dbServices.slice(0, 6).map(service => ({
+        key: service.id,
+        name: locale === 'ar' ? service.name_ar || service.name_en : service.name_en || service.name_ar,
+        description: locale === 'ar' ? service.description_ar || service.description_en : service.description_en || service.description_ar,
+      }))
+    : [
+        { key: 'electrical', name: dictionary.services.electrical },
+        { key: 'hvac', name: dictionary.services.hvac },
+        { key: 'plumbing', name: dictionary.services.plumbing },
+        { key: 'fire_fighting', name: dictionary.services.fire_fighting },
+        { key: 'low_current', name: dictionary.services.low_current },
+        { key: 'project_management', name: dictionary.services.project_management },
+      ]
 
   return (
     <section className="py-16 bg-white">
@@ -70,7 +81,7 @@ export default function ServicesSection({ locale, dictionary }: ServicesSectionP
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service) => {
-            const Icon = serviceIcons[service.key as keyof typeof serviceIcons]
+            const Icon = serviceIcons[service.key as keyof typeof serviceIcons] || ClipboardCheck
             return (
               <Link key={service.key} href={`/${locale}/services#${service.key}`}>
                 <Card variant="bordered" className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
@@ -85,7 +96,8 @@ export default function ServicesSection({ locale, dictionary }: ServicesSectionP
                         {service.name}
                       </CardTitle>
                       <CardContent className="text-sm">
-                        {serviceDescriptions[service.key as keyof typeof serviceDescriptions]?.[locale] ||
+                        {'description' in service && service.description ? service.description :
+                         serviceDescriptions[service.key as keyof typeof serviceDescriptions]?.[locale] ||
                          (locale === 'ar'
                           ? 'حلول متخصصة ومبتكرة تلبي أعلى معايير الجودة'
                           : 'Specialized and innovative solutions meeting the highest quality standards')}
