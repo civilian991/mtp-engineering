@@ -316,12 +316,12 @@ export default function AboutPage({ params }: Props) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href={`/${locale}/contact`}>
-                <Button size="lg" variant="secondary">
+                <Button as="span" size="lg" variant="secondary">
                   {isRTL ? 'اتصل بنا' : 'Contact Us'}
                 </Button>
               </Link>
               <Link href={`/${locale}/about/team`}>
-                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary-700">
+                <Button as="span" size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary-700">
                   {isRTL ? 'تعرف على فريقنا' : 'Meet Our Team'}
                 </Button>
               </Link>

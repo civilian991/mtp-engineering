@@ -6,6 +6,9 @@ import Footer from '@/components/layout/Footer'
 import { getDictionary } from '@/lib/dictionary'
 import { Locale } from '@/lib/i18n'
 
+// Force dynamic rendering globally to avoid SSG event handler issues with Next.js 15 + React 19
+export const dynamic = 'force-dynamic'
+
 const inter = Inter({ subsets: ['latin'] })
 
 export async function generateStaticParams() {

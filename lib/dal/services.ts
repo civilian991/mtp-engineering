@@ -1,7 +1,9 @@
 // Data Access Layer for Services
 import { createClient } from '@/lib/supabase/server'
-import { Service } from '@/types/database'
+import { Tables } from '@/types/database'
 import { cache } from 'react'
+
+type Service = Tables<'services'>
 
 // Get all active services
 export const getServices = cache(async () => {

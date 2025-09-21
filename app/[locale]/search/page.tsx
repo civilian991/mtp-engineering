@@ -337,22 +337,22 @@ export default function SearchPage({ params }: Props) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link href={`/${locale}/services`}>
-              <Button variant="outline" className="w-full">
+              <Button as="span" variant="outline" className="w-full">
                 {isRTL ? 'الخدمات' : 'Services'}
               </Button>
             </Link>
             <Link href={`/${locale}/projects`}>
-              <Button variant="outline" className="w-full">
+              <Button as="span" variant="outline" className="w-full">
                 {isRTL ? 'المشاريع' : 'Projects'}
               </Button>
             </Link>
             <Link href={`/${locale}/sectors`}>
-              <Button variant="outline" className="w-full">
+              <Button as="span" variant="outline" className="w-full">
                 {isRTL ? 'القطاعات' : 'Sectors'}
               </Button>
             </Link>
             <Link href={`/${locale}/contact`}>
-              <Button variant="outline" className="w-full">
+              <Button as="span" variant="outline" className="w-full">
                 {isRTL ? 'اتصل بنا' : 'Contact'}
               </Button>
             </Link>

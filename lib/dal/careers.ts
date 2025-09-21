@@ -1,14 +1,16 @@
 // Data Access Layer for Careers and Job Applications
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
-import { Career, JobApplication } from '@/types/database'
+import { Tables } from '@/types/database'
 import { cache } from 'react'
+
+type Career = Tables<'careers'>
 
 // Get all active careers
 export const getCareers = cache(async (filters?: {
   department?: string
-  employment_type?: Career['employment_type']
-  experience_level?: Career['experience_level']
+  employment_type?: string
+  experience_level?: string
   location?: string
 }) => {
   const supabase = await createClient()
@@ -17,7 +19,7 @@ export const getCareers = cache(async (filters?: {
     .from('careers')
     .select('*')
     .eq('is_active', true)
-    .order('is_urgent', { ascending: false })
+    // .order('is_urgent', { ascending: false }) // Field doesn't exist in database
     .order('created_at', { ascending: false })
 
   if (filters) {
@@ -72,7 +74,7 @@ export const getUrgentCareers = cache(async (limit: number = 5) => {
     .from('careers')
     .select('*')
     .eq('is_active', true)
-    .eq('is_urgent', true)
+    // .eq('is_urgent', true) // Field doesn't exist in database
     .order('created_at', { ascending: false })
     .limit(limit)
 
@@ -85,16 +87,26 @@ export const getUrgentCareers = cache(async (limit: number = 5) => {
 })
 
 // Submit job application (public)
-export async function submitJobApplication(application: Omit<JobApplication, 'id' | 'created_at' | 'status' | 'rating' | 'notes' | 'reviewed_at' | 'interviewed_at' | 'decided_at' | 'reviewed_by'>) {
+export async function submitJobApplication(application: {
+  career_id: string
+  name: string
+  email: string
+  phone?: string | null
+  cv_url?: string | null
+  cover_letter?: string | null
+  linkedin_url?: string | null
+  portfolio_url?: string | null
+  years_of_experience?: number | null
+  current_position?: string | null
+  current_company?: string | null
+  expected_salary?: string | null
+  notice_period?: string | null
+}) {
   const supabase = createBrowserClient()
-
-  // Generate unique application number
-  const applicationNumber = `APP-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
 
   const applicationData = {
     ...application,
-    application_number: applicationNumber,
-    status: 'new' as const,
+    status: 'pending',
   }
 
   const { data, error } = await supabase
@@ -108,29 +120,30 @@ export async function submitJobApplication(application: Omit<JobApplication, 'id
     throw error
   }
 
-  // Increment applications count for the career
-  await incrementApplicationsCount(application.career_id)
+  // TODO: Increment applications count for the career when RPC function is created
+  // await incrementApplicationsCount(application.career_id)
 
   return data
 }
 
 // Increment applications count
-async function incrementApplicationsCount(careerId: string) {
-  const supabase = createBrowserClient()
-
-  const { error } = await supabase.rpc('increment_applications_count', {
-    career_id: careerId
-  })
-
-  if (error) {
-    console.error('Error incrementing applications count:', error)
-  }
-}
+// TODO: Implement when RPC function is created in database
+// async function incrementApplicationsCount(careerId: string) {
+//   const supabase = createBrowserClient()
+//
+//   const { error } = await supabase.rpc('increment_applications_count', {
+//     career_id: careerId
+//   })
+//
+//   if (error) {
+//     console.error('Error incrementing applications count:', error)
+//   }
+// }
 
 // Get all job applications (admin only)
 export async function getJobApplications(filters?: {
   career_id?: string
-  status?: JobApplication['status']
+  status?: string
   rating?: number
 }) {
   const supabase = await createClient()
@@ -194,33 +207,34 @@ export async function getJobApplicationById(id: string) {
 // Update job application status (admin only)
 export async function updateApplicationStatus(
   id: string,
-  status: JobApplication['status'],
+  status: string,
   notes?: string,
   rating?: number
 ) {
   const supabase = await createClient()
 
-  const updates: Partial<JobApplication> = {
+  const updates: any = {
     status,
   }
 
   if (notes !== undefined) updates.notes = notes
-  if (rating !== undefined) updates.rating = rating
+  // Note: rating field doesn't exist in database schema
+  // if (rating !== undefined) updates.rating = rating
 
-  // Set timestamp based on status
-  const now = new Date().toISOString()
-  switch (status) {
-    case 'reviewing':
-      updates.reviewed_at = now
-      break
-    case 'interview':
-      updates.interviewed_at = now
-      break
-    case 'offer':
-    case 'rejected':
-      updates.decided_at = now
-      break
-  }
+  // TODO: Add timestamp fields to database schema if needed
+  // const now = new Date().toISOString()
+  // switch (status) {
+  //   case 'reviewing':
+  //     updates.reviewed_at = now
+  //     break
+  //   case 'interview':
+  //     updates.interviewed_at = now
+  //     break
+  //   case 'offer':
+  //   case 'rejected':
+  //     updates.decided_at = now
+  //     break
+  // }
 
   const { data, error } = await supabase
     .from('job_applications')
@@ -300,7 +314,7 @@ export async function getCareerStats() {
 
   const { data: careers } = await supabase
     .from('careers')
-    .select('id, is_active, is_urgent, applications_count')
+    .select('id, is_active')
 
   const { data: applications } = await supabase
     .from('job_applications')
@@ -309,13 +323,15 @@ export async function getCareerStats() {
   const stats = {
     totalCareers: careers?.length || 0,
     activeCareers: careers?.filter(c => c.is_active).length || 0,
-    urgentCareers: careers?.filter(c => c.is_urgent).length || 0,
+    urgentCareers: 0, // is_urgent field doesn't exist in database
     totalApplications: applications?.length || 0,
     applicationsByStatus: {} as Record<string, number>,
   }
 
   applications?.forEach(app => {
-    stats.applicationsByStatus[app.status] = (stats.applicationsByStatus[app.status] || 0) + 1
+    if (app.status) {
+      stats.applicationsByStatus[app.status] = (stats.applicationsByStatus[app.status] || 0) + 1
+    }
   })
 
   return stats

@@ -288,13 +288,13 @@ export default async function UtilitiesSectorPage({ params }: Props) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href={`/${locale}/contact`}>
-              <Button size="lg" className="bg-cyan-600 hover:bg-cyan-700">
+              <Button as="span" size="lg" className="bg-cyan-600 hover:bg-cyan-700">
                 {isRTL ? 'ابدأ مشروع المرافق' : 'Start Your Utility Project'}
                 <ArrowRight className={`ml-2 h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
               </Button>
             </Link>
             <Link href={`/${locale}/projects`}>
-              <Button variant="outline" size="lg">
+              <Button as="span" variant="outline" size="lg">
                 {isRTL ? 'مشاريع المرافق' : 'Utility Projects'}
               </Button>
             </Link>

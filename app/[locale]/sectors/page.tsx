@@ -267,6 +267,7 @@ export default async function SectorsPage({ params }: Props) {
 
                 <Link href={`/${locale}/sectors/${sector.slug}`}>
                   <Button
+                    as="span"
                     variant="outline"
                     size="sm"
                     className="w-full group-hover:bg-primary-600 group-hover:text-white"
@@ -390,12 +391,12 @@ export default async function SectorsPage({ params }: Props) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href={`/${locale}/projects`}>
-                <Button size="lg" variant="secondary">
+                <Button as="span" size="lg" variant="secondary">
                   {isRTL ? 'عرض المشاريع' : 'View Projects'}
                 </Button>
               </Link>
               <Link href={`/${locale}/contact`}>
-                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary-700">
+                <Button as="span" size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary-700">
                   {isRTL ? 'ناقش مشروعك' : 'Discuss Your Project'}
                 </Button>
               </Link>

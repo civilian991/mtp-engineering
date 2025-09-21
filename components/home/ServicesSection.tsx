@@ -100,7 +100,7 @@ export default function ServicesSection({ locale, dictionary }: ServicesSectionP
 
         <div className="text-center mt-12">
           <Link href={`/${locale}/services`}>
-            <Button variant="primary" size="lg">
+            <Button as="span" variant="primary" size="lg">
               {locale === 'ar' ? 'جميع الخدمات' : 'View All Services'}
             </Button>
           </Link>

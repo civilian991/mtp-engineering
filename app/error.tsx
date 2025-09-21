@@ -55,7 +55,7 @@ export default function Error({
             Try Again
           </Button>
           <Link href="/" className="w-full sm:w-auto">
-            <Button variant="outline" size="lg" className="w-full">
+            <Button as="span" variant="outline" size="lg" className="w-full">
               <Home className="h-5 w-5 mr-2" />
               Go to Homepage
             </Button>

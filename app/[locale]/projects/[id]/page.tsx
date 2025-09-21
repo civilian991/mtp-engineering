@@ -179,7 +179,7 @@ export default async function ProjectDetailPage({
       <section className="bg-gradient-to-br from-primary-600 to-primary-800 text-white py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Link href={`/${locale}/projects`}>
-            <Button variant="outline" size="sm" className="mb-6 text-white border-white hover:bg-white hover:text-primary-600">
+            <Button as="span" variant="outline" size="sm" className="mb-6 text-white border-white hover:bg-white hover:text-primary-600">
               <ArrowLeft className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 rtl:rotate-180" />
               {isRTL ? 'العودة للمشاريع' : 'Back to Projects'}
             </Button>
@@ -307,12 +307,12 @@ export default async function ProjectDetailPage({
 
                 <div className="mt-6 space-y-3">
                   <Link href={`/${locale}/contact`} className="block">
-                    <Button variant="primary" size="md" className="w-full">
+                    <Button as="span" variant="primary" size="md" className="w-full">
                       {isRTL ? 'استفسر عن مشروع مماثل' : 'Inquire About Similar Project'}
                     </Button>
                   </Link>
                   <Link href={`/${locale}/projects`} className="block">
-                    <Button variant="outline" size="md" className="w-full">
+                    <Button as="span" variant="outline" size="md" className="w-full">
                       {isRTL ? 'عرض جميع المشاريع' : 'View All Projects'}
                     </Button>
                   </Link>

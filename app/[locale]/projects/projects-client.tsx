@@ -222,7 +222,7 @@ export default function ProjectsClient({ locale, dictionary }: ProjectsClientPro
             </div>
 
             <Link href={`/${locale}/projects/${project.id}`} className="block mt-4">
-              <Button variant="outline" size="sm" className="w-full">
+              <Button as="span" variant="outline" size="sm" className="w-full">
                 {locale === 'ar' ? 'عرض التفاصيل' : 'View Details'} →
               </Button>
             </Link>

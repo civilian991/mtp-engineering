@@ -1,3 +1,5 @@
+'use client'
+
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -29,8 +31,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const Component = as
 
     if (Component === 'span') {
+      // When rendering as span, don't accept any props to avoid event handler issues
+      // Only use className for styling
       return (
-        <span className={cn(baseStyles, variants[variant], sizes[size], 'cursor-pointer', className)}>
+        <span
+          className={cn(baseStyles, variants[variant], sizes[size], 'cursor-pointer', className)}
+        >
           {children}
         </span>
       )

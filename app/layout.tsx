@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
 
+// Force dynamic rendering for the entire app
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'MTP Engineering Consultants',
   description: 'Leading engineering consultancy firm in Saudi Arabia since 1980',

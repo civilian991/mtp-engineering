@@ -98,7 +98,7 @@ export default function ProjectsSection({ locale, dictionary }: ProjectsSectionP
 
         <div className="text-center mt-12">
           <Link href={`/${locale}/projects`}>
-            <Button size="lg">
+            <Button as="span" size="lg">
               {dictionary.projects.all}
               <ArrowRight className="ml-2 rtl:mr-2 rtl:ml-0 h-5 w-5" />
             </Button>

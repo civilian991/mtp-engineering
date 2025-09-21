@@ -5,6 +5,7 @@ import { GraduationCap, CheckCircle, ArrowRight, School, BookOpen, Users2 } from
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
+import LinkButton from '@/components/ui/LinkButton'
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -275,17 +276,13 @@ export default async function EducationSectorPage({ params }: Props) {
               : 'Let us help you create world-class educational institutions'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href={`/${locale}/contact`}>
-              <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700">
-                {isRTL ? 'ابدأ مشروعك التعليمي' : 'Start Your Education Project'}
-                <ArrowRight className={`ml-2 h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
-              </Button>
-            </Link>
-            <Link href={`/${locale}/projects`}>
-              <Button variant="outline" size="lg">
-                {isRTL ? 'المشاريع التعليمية' : 'Education Projects'}
-              </Button>
-            </Link>
+            <LinkButton href={`/${locale}/contact`} size="lg" className="bg-indigo-600 hover:bg-indigo-700">
+              {isRTL ? 'ابدأ مشروعك التعليمي' : 'Start Your Education Project'}
+              <ArrowRight className={`ml-2 h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
+            </LinkButton>
+            <LinkButton href={`/${locale}/projects`} variant="outline" size="lg">
+              {isRTL ? 'المشاريع التعليمية' : 'Education Projects'}
+            </LinkButton>
           </div>
         </div>
       </section>

@@ -185,6 +185,7 @@ export default function AdminProjectsPage() {
                         <Eye className="h-4 w-4" />
                       </button>
                       <button className="p-1 text-secondary-600 hover:text-primary-600" aria-label="View images">
+                        {/* eslint-disable-next-line jsx-a11y/alt-text */}
                         <Image className="h-4 w-4" />
                       </button>
                       <button className="p-1 text-secondary-600 hover:text-primary-600">

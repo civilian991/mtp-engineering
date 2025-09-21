@@ -84,7 +84,7 @@ export default function ApplicationForm({ locale, jobId }: ApplicationFormProps)
               : 'Thank you for your interest. We will review your application and contact you soon.'}
           </p>
           <Link href={`/${locale}/careers`}>
-            <Button variant="primary">
+            <Button as="span" variant="primary">
               {isRTL ? 'العودة إلى الوظائف' : 'Back to Careers'}
             </Button>
           </Link>
@@ -256,7 +256,7 @@ export default function ApplicationForm({ locale, jobId }: ApplicationFormProps)
                     id="cv-upload"
                   />
                   <label htmlFor="cv-upload">
-                    <Button variant="outline" size="sm" as="span">
+                    <Button as="span" variant="outline" size="sm">
                       {isRTL ? 'اختر ملف' : 'Choose File'}
                     </Button>
                   </label>
@@ -269,11 +269,11 @@ export default function ApplicationForm({ locale, jobId }: ApplicationFormProps)
               {/* Submit Button */}
               <div className="flex justify-end gap-4">
                 <Link href={`/${locale}/careers`}>
-                  <Button variant="outline">
+                  <Button as="span" variant="outline">
                     {isRTL ? 'إلغاء' : 'Cancel'}
                   </Button>
                 </Link>
-                <Button type="submit" isLoading={isSubmitting}>
+                <Button as="span" type="submit" isLoading={isSubmitting}>
                   {isSubmitting
                     ? isRTL ? 'جاري الإرسال...' : 'Submitting...'
                     : isRTL ? 'إرسال الطلب' : 'Submit Application'}

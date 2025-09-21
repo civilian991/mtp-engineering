@@ -282,7 +282,7 @@ export default async function CivilEngineeringPage({ params }: Props) {
             </div>
             <div className="text-center mt-8">
               <Link href={`/${locale}/projects`}>
-                <Button variant="outline">
+                <Button as="span" variant="outline">
                   {isRTL ? 'عرض جميع المشاريع' : 'View All Projects'}
                   <ArrowRight className={`h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0 ${isRTL ? 'rotate-180' : ''}`} />
                 </Button>
@@ -306,12 +306,12 @@ export default async function CivilEngineeringPage({ params }: Props) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href={`/${locale}/contact`}>
-                <Button size="lg" variant="secondary">
+                <Button as="span" size="lg" variant="secondary">
                   {isRTL ? 'احصل على استشارة' : 'Get Consultation'}
                 </Button>
               </Link>
               <Link href={`/${locale}/services`}>
-                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary-700">
+                <Button as="span" size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary-700">
                   {isRTL ? 'خدمات أخرى' : 'Other Services'}
                 </Button>
               </Link>

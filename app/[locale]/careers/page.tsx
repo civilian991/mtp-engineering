@@ -262,7 +262,7 @@ export default async function CareersPage({ params }: Props) {
                   </div>
                   <div className="mt-4 md:mt-0 md:ml-6 rtl:md:mr-6 rtl:md:ml-0">
                     <Link href={`/${locale}/careers/${job.id}/apply`}>
-                      <Button variant="primary">
+                      <Button as="span" variant="primary">
                         {dictionary.careers.apply}
                       </Button>
                     </Link>

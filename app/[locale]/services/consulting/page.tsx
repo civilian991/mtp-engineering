@@ -213,13 +213,13 @@ export default async function ConsultingPage({ params }: Props) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href={`/${locale}/contact`}>
-              <Button size="lg">
+              <Button as="span" size="lg">
                 {isRTL ? 'طلب استشارة' : 'Request Consultation'}
                 <ArrowRight className={`ml-2 h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
               </Button>
             </Link>
             <Link href={`/${locale}/about`}>
-              <Button variant="outline" size="lg">
+              <Button as="span" variant="outline" size="lg">
                 {isRTL ? 'تعرف على خبرائنا' : 'Meet Our Experts'}
               </Button>
             </Link>

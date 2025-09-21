@@ -285,15 +285,19 @@ export default async function GovernmentSectorPage({ params }: Props) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href={`/${locale}/contact`}>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                {isRTL ? 'ابدأ مشروعك' : 'Start Your Project'}
-                <ArrowRight className={`ml-2 h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
-              </Button>
+              <div>
+                <Button as="span" size="lg" className="bg-blue-600 hover:bg-blue-700">
+                  {isRTL ? 'ابدأ مشروعك' : 'Start Your Project'}
+                  <ArrowRight className={`ml-2 h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
+                </Button>
+              </div>
             </Link>
             <Link href={`/${locale}/projects`}>
-              <Button variant="outline" size="lg">
-                {isRTL ? 'عرض المشاريع الحكومية' : 'View Government Projects'}
-              </Button>
+              <div>
+                <Button as="span" variant="outline" size="lg">
+                  {isRTL ? 'عرض المشاريع الحكومية' : 'View Government Projects'}
+                </Button>
+              </div>
             </Link>
           </div>
         </div>

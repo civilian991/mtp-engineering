@@ -1,58 +1,41 @@
 // Data Access Layer for Projects
 import { createClient } from '@/lib/supabase/server'
-import { Project, ProjectImage, ProjectDocument } from '@/types/database'
+import { Tables } from '@/types/database'
 import { cache } from 'react'
 
+type Project = Tables<'projects'>
+
 interface ProjectFilters {
-  service_id?: string
-  sector_id?: string
   year?: number
-  city?: string
+  sector?: string
   status?: string
   is_featured?: boolean
-  is_legacy?: boolean
   search?: string
 }
 
-// Get all published projects with relations
+// Get all projects
 export const getProjects = cache(async (filters?: ProjectFilters, limit?: number, offset?: number) => {
   const supabase = await createClient()
 
   let query = supabase
     .from('projects')
-    .select(`
-      *,
-      project_services (
-        service_id,
-        services (*)
-      ),
-      project_sectors (
-        sector_id,
-        sectors (*)
-      ),
-      project_images (
-        *
-      )
-    `)
-    .eq('is_published', true)
+    .select('*')
+    .order('year', { ascending: false })
 
   // Apply filters
   if (filters) {
     if (filters.year) query = query.eq('year', filters.year)
-    if (filters.city) query = query.or(`city_en.ilike.%${filters.city}%,city_ar.ilike.%${filters.city}%`)
+    if (filters.sector) query = query.eq('sector', filters.sector)
     if (filters.status) query = query.eq('status', filters.status)
     if (filters.is_featured !== undefined) query = query.eq('is_featured', filters.is_featured)
-    if (filters.is_legacy !== undefined) query = query.eq('is_legacy', filters.is_legacy)
     if (filters.search) {
-      query = query.or(`name_en.ilike.%${filters.search}%,name_ar.ilike.%${filters.search}%,description_en.ilike.%${filters.search}%,description_ar.ilike.%${filters.search}%,client_name_en.ilike.%${filters.search}%,client_name_ar.ilike.%${filters.search}%`)
+      query = query.or(`name_en.ilike.%${filters.search}%,name_ar.ilike.%${filters.search}%,description_en.ilike.%${filters.search}%,description_ar.ilike.%${filters.search}%,client_en.ilike.%${filters.search}%,client_ar.ilike.%${filters.search}%`)
     }
   }
 
   // Apply pagination
   if (limit) query = query.limit(limit)
   if (offset) query = query.range(offset, offset + (limit || 10) - 1)
-
-  query = query.order('year', { ascending: false }).order('sort_order', { ascending: true })
 
   const { data, error } = await query
 
@@ -64,48 +47,20 @@ export const getProjects = cache(async (filters?: ProjectFilters, limit?: number
   return data || []
 })
 
-// Get single project by slug with full relations
-export const getProjectBySlug = cache(async (slug: string) => {
+// Get single project by ID
+export const getProjectById = cache(async (id: string) => {
   const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('projects')
-    .select(`
-      *,
-      project_services (
-        service_id,
-        is_primary,
-        services (*)
-      ),
-      project_sectors (
-        sector_id,
-        is_primary,
-        sectors (*)
-      ),
-      project_images (
-        *
-      ),
-      project_documents (
-        *
-      ),
-      project_team (
-        team_member_id,
-        role,
-        responsibilities,
-        team_members (*)
-      )
-    `)
-    .eq('slug', slug)
-    .eq('is_published', true)
+    .select('*')
+    .eq('id', id)
     .single()
 
   if (error) {
     console.error('Error fetching project:', error)
     return null
   }
-
-  // Increment view count
-  await incrementProjectViews(data.id)
 
   return data
 })
@@ -116,13 +71,7 @@ export const getFeaturedProjects = cache(async (limit: number = 6) => {
 
   const { data, error } = await supabase
     .from('projects')
-    .select(`
-      *,
-      project_images (
-        *
-      )
-    `)
-    .eq('is_published', true)
+    .select('*')
     .eq('is_featured', true)
     .order('year', { ascending: false })
     .limit(limit)
@@ -141,13 +90,7 @@ export const getRecentProjects = cache(async (limit: number = 10) => {
 
   const { data, error } = await supabase
     .from('projects')
-    .select(`
-      *,
-      project_images (
-        *
-      )
-    `)
-    .eq('is_published', true)
+    .select('*')
     .order('created_at', { ascending: false })
     .limit(limit)
 
@@ -159,49 +102,15 @@ export const getRecentProjects = cache(async (limit: number = 10) => {
   return data || []
 })
 
-// Get projects by service
-export const getProjectsByService = cache(async (serviceId: string, limit?: number) => {
-  const supabase = await createClient()
-
-  let query = supabase
-    .from('project_services')
-    .select(`
-      projects (
-        *,
-        project_images (
-          *
-        )
-      )
-    `)
-    .eq('service_id', serviceId)
-
-  if (limit) query = query.limit(limit)
-
-  const { data, error } = await query
-
-  if (error) {
-    console.error('Error fetching projects by service:', error)
-    return []
-  }
-
-  return data?.map(item => item.projects).filter(Boolean) || []
-})
-
 // Get projects by sector
-export const getProjectsBySector = cache(async (sectorId: string, limit?: number) => {
+export const getProjectsBySector = cache(async (sector: string, limit?: number) => {
   const supabase = await createClient()
 
   let query = supabase
-    .from('project_sectors')
-    .select(`
-      projects (
-        *,
-        project_images (
-          *
-        )
-      )
-    `)
-    .eq('sector_id', sectorId)
+    .from('projects')
+    .select('*')
+    .eq('sector', sector)
+    .order('year', { ascending: false })
 
   if (limit) query = query.limit(limit)
 
@@ -209,25 +118,6 @@ export const getProjectsBySector = cache(async (sectorId: string, limit?: number
 
   if (error) {
     console.error('Error fetching projects by sector:', error)
-    return []
-  }
-
-  return data?.map(item => item.projects).filter(Boolean) || []
-})
-
-// Get legacy projects (1980-2012)
-export const getLegacyProjects = cache(async () => {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('is_published', true)
-    .eq('is_legacy', true)
-    .order('year', { ascending: false })
-
-  if (error) {
-    console.error('Error fetching legacy projects:', error)
     return []
   }
 
@@ -241,7 +131,6 @@ export const getProjectYears = cache(async () => {
   const { data, error } = await supabase
     .from('projects')
     .select('year')
-    .eq('is_published', true)
     .order('year', { ascending: false })
 
   if (error) {
@@ -250,42 +139,28 @@ export const getProjectYears = cache(async () => {
   }
 
   // Get unique years
-  const years = [...new Set(data?.map(p => p.year) || [])]
+  const years = [...new Set(data?.map(p => p.year).filter(Boolean) || [])]
   return years
 })
 
-// Get project cities for filter
-export const getProjectCities = cache(async () => {
+// Get project sectors for filter
+export const getProjectSectors = cache(async () => {
   const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('projects')
-    .select('city_en, city_ar')
-    .eq('is_published', true)
-    .not('city_en', 'is', null)
+    .select('sector')
+    .not('sector', 'is', null)
 
   if (error) {
-    console.error('Error fetching project cities:', error)
+    console.error('Error fetching project sectors:', error)
     return []
   }
 
-  // Get unique cities
-  const cities = [...new Set(data?.flatMap(p => [p.city_en, p.city_ar].filter(Boolean)) || [])]
-  return cities
+  // Get unique sectors
+  const sectors = [...new Set(data?.map(p => p.sector).filter(Boolean) || [])]
+  return sectors
 })
-
-// Increment project views
-async function incrementProjectViews(projectId: string) {
-  const supabase = await createClient()
-
-  const { error } = await supabase.rpc('increment_project_views', {
-    project_id: projectId
-  })
-
-  if (error) {
-    console.error('Error incrementing project views:', error)
-  }
-}
 
 // Create new project (admin only)
 export async function createProject(project: Omit<Project, 'id' | 'created_at' | 'updated_at'>) {
@@ -341,38 +216,42 @@ export async function deleteProject(id: string) {
   return true
 }
 
-// Add project image
-export async function addProjectImage(image: Omit<ProjectImage, 'id' | 'created_at'>) {
+// Get project statistics (admin only)
+export async function getProjectStats() {
   const supabase = await createClient()
 
-  const { data, error } = await supabase
-    .from('project_images')
-    .insert(image)
-    .select()
-    .single()
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('id, sector, status, is_featured, year')
 
-  if (error) {
-    console.error('Error adding project image:', error)
-    throw error
+  const stats = {
+    totalProjects: projects?.length || 0,
+    featuredProjects: projects?.filter(p => p.is_featured).length || 0,
+    completedProjects: projects?.filter(p => p.status === 'completed').length || 0,
+    ongoingProjects: projects?.filter(p => p.status === 'ongoing').length || 0,
+    bySector: {} as Record<string, number>,
+    byYear: {} as Record<string, number>,
   }
 
-  return data
+  projects?.forEach(project => {
+    // Count by sector
+    if (project.sector) {
+      stats.bySector[project.sector] = (stats.bySector[project.sector] || 0) + 1
+    }
+    // Count by year
+    if (project.year) {
+      stats.byYear[project.year] = (stats.byYear[project.year] || 0) + 1
+    }
+  })
+
+  return stats
 }
 
-// Add project document
-export async function addProjectDocument(document: Omit<ProjectDocument, 'id' | 'created_at'>) {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase
-    .from('project_documents')
-    .insert(document)
-    .select()
-    .single()
-
-  if (error) {
-    console.error('Error adding project document:', error)
-    throw error
-  }
-
-  return data
-}
+// Note: The following functions are commented out because their tables don't exist in the database
+// - getProjectBySlug (slug field doesn't exist)
+// - getProjectsByService (project_services table doesn't exist)
+// - getLegacyProjects (is_legacy field doesn't exist)
+// - getProjectCities (city_en, city_ar fields don't exist)
+// - incrementProjectViews (RPC function doesn't exist)
+// - addProjectImage (project_images table doesn't exist)
+// - addProjectDocument (project_documents table doesn't exist)

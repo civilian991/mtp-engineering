@@ -1,4 +1,6 @@
-import { Metadata } from 'next'
+'use client'
+
+import { useState, useEffect } from 'react'
 import { getDictionary } from '@/lib/dictionary'
 import { Locale } from '@/lib/i18n'
 import { Download, FileText, FileBadge, FileCheck, Presentation, Book, ArrowRight } from 'lucide-react'
@@ -8,18 +10,6 @@ import Link from 'next/link'
 
 type Props = {
   params: Promise<{ locale: string }>
-}
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params
-  const isRTL = locale === 'ar'
-
-  return {
-    title: isRTL ? 'الموارد والتنزيلات | MTP Engineering' : 'Resources & Downloads | MTP Engineering',
-    description: isRTL
-      ? 'قم بتنزيل ملف الشركة والكتيبات والشهادات والتقارير السنوية'
-      : 'Download company profile, brochures, certifications, and annual reports',
-  }
 }
 
 interface Resource {
@@ -37,10 +27,22 @@ interface Resource {
   }[]
 }
 
-export default async function ResourcesPage({ params }: Props) {
-  const { locale } = await params
-  const isRTL = locale === 'ar'
-  const dictionary = await getDictionary(locale as Locale)
+export default function ResourcesPage({ params }: Props) {
+  const [locale, setLocale] = useState<string>('en')
+  const [isRTL, setIsRTL] = useState(false)
+  const [dictionary, setDictionary] = useState<any>(null)
+
+  useEffect(() => {
+    params.then((p) => {
+      setLocale(p.locale)
+      setIsRTL(p.locale === 'ar')
+      getDictionary(p.locale as Locale).then(setDictionary)
+    })
+  }, [params])
+
+  if (!dictionary) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
 
   const resources: Resource[] = [
     {
@@ -339,13 +341,13 @@ export default async function ResourcesPage({ params }: Props) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href={`/${locale}/contact`}>
-              <Button size="lg">
+              <Button as="span" size="lg">
                 {isRTL ? 'طلب وثائق مخصصة' : 'Request Custom Documents'}
                 <ArrowRight className={`ml-2 h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
               </Button>
             </Link>
             <Link href={`/${locale}/contact`}>
-              <Button variant="outline" size="lg">
+              <Button as="span" variant="outline" size="lg">
                 {isRTL ? 'اتصل بفريق المبيعات' : 'Contact Sales Team'}
               </Button>
             </Link>

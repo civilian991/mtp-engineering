@@ -3,6 +3,10 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
+  // Force dynamic rendering for all pages to avoid SSG event handler issues
+  experimental: {
+    ppr: false,
+  },
   images: {
     domains: ['images.unsplash.com', 'localhost'],
     formats: ['image/avif', 'image/webp'],

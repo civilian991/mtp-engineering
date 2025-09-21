@@ -1,17 +1,24 @@
 // Data Access Layer for Inquiries
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
-import { Inquiry } from '@/types/database'
+import { Tables } from '@/types/database'
+
+type Inquiry = Tables<'inquiries'>
 
 // Submit new inquiry (public)
-export async function submitInquiry(inquiry: Omit<Inquiry, 'id' | 'created_at' | 'updated_at' | 'status' | 'priority' | 'assigned_to' | 'response_text' | 'responded_at' | 'responded_by'>) {
+export async function submitInquiry(inquiry: {
+  name: string
+  email: string
+  phone?: string | null
+  subject?: string | null
+  message: string
+}) {
   // Use browser client for public submissions
   const supabase = createBrowserClient()
 
   const inquiryData = {
     ...inquiry,
-    status: 'new' as const,
-    priority: 'normal' as const,
+    status: 'pending', // Database uses 'pending' as default
   }
 
   const { data, error } = await supabase
@@ -33,9 +40,9 @@ export async function submitInquiry(inquiry: Omit<Inquiry, 'id' | 'created_at' |
 
 // Get all inquiries (admin only)
 export async function getInquiries(filters?: {
-  status?: Inquiry['status']
-  type?: Inquiry['inquiry_type']
-  priority?: Inquiry['priority']
+  status?: string
+  type?: string
+  priority?: string
 }) {
   const supabase = await createClient()
 
@@ -47,12 +54,13 @@ export async function getInquiries(filters?: {
   if (filters?.status) {
     query = query.eq('status', filters.status)
   }
-  if (filters?.type) {
-    query = query.eq('inquiry_type', filters.type)
-  }
-  if (filters?.priority) {
-    query = query.eq('priority', filters.priority)
-  }
+  // Note: inquiry_type and priority fields don't exist in database
+  // if (filters?.type) {
+  //   query = query.eq('inquiry_type', filters.type)
+  // }
+  // if (filters?.priority) {
+  //   query = query.eq('priority', filters.priority)
+  // }
 
   const { data, error } = await query
 
@@ -85,7 +93,7 @@ export async function getInquiryById(id: string) {
 // Update inquiry status (admin only)
 export async function updateInquiryStatus(
   id: string,
-  status: Inquiry['status'],
+  status: string,
   response?: {
     response_text: string
     responded_by: string
@@ -93,13 +101,13 @@ export async function updateInquiryStatus(
 ) {
   const supabase = await createClient()
 
-  const updates: Partial<Inquiry> = {
+  const updates: any = {
     status,
   }
 
   if (response) {
-    updates.response_text = response.response_text
-    updates.responded_by = response.responded_by
+    updates.response = response.response_text
+    // Note: responded_by field doesn't exist in database
     updates.responded_at = new Date().toISOString()
   }
 
@@ -119,23 +127,24 @@ export async function updateInquiryStatus(
 }
 
 // Assign inquiry to user (admin only)
-export async function assignInquiry(id: string, userId: string) {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase
-    .from('inquiries')
-    .update({ assigned_to: userId })
-    .eq('id', id)
-    .select()
-    .single()
-
-  if (error) {
-    console.error('Error assigning inquiry:', error)
-    throw error
-  }
-
-  return data
-}
+// TODO: Add assigned_to field to database if needed
+// export async function assignInquiry(id: string, userId: string) {
+//   const supabase = await createClient()
+//
+//   const { data, error } = await supabase
+//     .from('inquiries')
+//     .update({ assigned_to: userId })
+//     .eq('id', id)
+//     .select()
+//     .single()
+//
+//   if (error) {
+//     console.error('Error assigning inquiry:', error)
+//     throw error
+//   }
+//
+//   return data
+// }
 
 // Get inquiry statistics (admin only)
 export async function getInquiryStats() {
@@ -143,7 +152,7 @@ export async function getInquiryStats() {
 
   const { data, error } = await supabase
     .from('inquiries')
-    .select('status, inquiry_type, priority')
+    .select('status')
 
   if (error) {
     console.error('Error fetching inquiry stats:', error)
@@ -159,15 +168,9 @@ export async function getInquiryStats() {
 
   data?.forEach(inquiry => {
     // Count by status
-    stats.byStatus[inquiry.status] = (stats.byStatus[inquiry.status] || 0) + 1
-
-    // Count by type
-    if (inquiry.inquiry_type) {
-      stats.byType[inquiry.inquiry_type] = (stats.byType[inquiry.inquiry_type] || 0) + 1
+    if (inquiry.status) {
+      stats.byStatus[inquiry.status] = (stats.byStatus[inquiry.status] || 0) + 1
     }
-
-    // Count by priority
-    stats.byPriority[inquiry.priority] = (stats.byPriority[inquiry.priority] || 0) + 1
   })
 
   return stats

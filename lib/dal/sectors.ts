@@ -1,7 +1,9 @@
 // Data Access Layer for Sectors
 import { createClient } from '@/lib/supabase/server'
-import { Sector } from '@/types/database'
+import { Tables } from '@/types/database'
 import { cache } from 'react'
+
+type Sector = Tables<'sectors'>
 
 // Get all active sectors
 export const getSectors = cache(async () => {

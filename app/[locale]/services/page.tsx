@@ -170,7 +170,7 @@ export default async function ServicesPage({ params }: Props) {
                   ))}
                 </ul>
                 <Link href={`/${locale}/services/${service.slug}`}>
-                  <Button variant="outline" size="sm" className="group-hover:bg-primary-600 group-hover:text-white">
+                  <Button as="span" variant="outline" size="sm" className="group-hover:bg-primary-600 group-hover:text-white">
                     {isRTL ? 'اعرف المزيد' : 'Learn More'}
                     <ArrowRight className={`h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0 ${isRTL ? 'rotate-180' : ''}`} />
                   </Button>
@@ -283,12 +283,12 @@ export default async function ServicesPage({ params }: Props) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href={`/${locale}/contact`}>
-                <Button size="lg" variant="secondary">
+                <Button as="span" size="lg" variant="secondary">
                   {isRTL ? 'ابدأ مشروعك' : 'Start Your Project'}
                 </Button>
               </Link>
               <Link href={`/${locale}/projects`}>
-                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary-700">
+                <Button as="span" size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary-700">
                   {isRTL ? 'عرض مشاريعنا' : 'View Our Projects'}
                 </Button>
               </Link>

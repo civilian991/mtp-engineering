@@ -52,7 +52,7 @@ export default function NotFound() {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href={`/${locale}`}>
-              <Button size="lg" variant="primary">
+              <Button as="span" size="lg" variant="primary">
                 <Home className="h-5 w-5 mr-2 rtl:ml-2 rtl:mr-0" />
                 {isRTL ? 'الصفحة الرئيسية' : 'Go to Homepage'}
               </Button>

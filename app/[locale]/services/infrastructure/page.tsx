@@ -200,13 +200,13 @@ export default async function InfrastructurePage({ params }: Props) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href={`/${locale}/contact`}>
-              <Button size="lg">
+              <Button as="span" size="lg">
                 {isRTL ? 'ابدأ مشروعك' : 'Start Your Project'}
                 <ArrowRight className={`ml-2 h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
               </Button>
             </Link>
             <Link href={`/${locale}/projects`}>
-              <Button variant="outline" size="lg">
+              <Button as="span" variant="outline" size="lg">
                 {isRTL ? 'عرض مشاريعنا' : 'View Our Projects'}
               </Button>
             </Link>

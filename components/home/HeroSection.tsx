@@ -22,13 +22,13 @@ export default function HeroSection({ locale, dictionary }: HeroSectionProps) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: '0.2s' }}>
             <Link href={`/${locale}/projects`}>
-              <Button size="lg" className="w-full sm:w-auto group">
+              <Button as="span" size="lg" className="w-full sm:w-auto group">
                 {dictionary.hero.cta}
                 <ArrowRight className="ml-2 rtl:mr-2 rtl:ml-0 rtl:rotate-180 h-5 w-5 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
               </Button>
             </Link>
             <Link href={`/${locale}/contact`}>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+              <Button as="span" variant="outline" size="lg" className="w-full sm:w-auto">
                 {dictionary.navigation.contact}
               </Button>
             </Link>
