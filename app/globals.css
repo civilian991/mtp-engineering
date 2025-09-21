@@ -1,0 +1,317 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-primary-200;
+  }
+
+  body {
+    @apply bg-primary-50 text-primary-800 antialiased;
+  }
+
+  html[dir="rtl"] {
+    font-family: 'IBM Plex Arabic', 'Noto Sans Arabic', system-ui, sans-serif;
+  }
+
+  html[dir="ltr"] {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+
+  /* Typography Scale */
+  h1, .h1 {
+    @apply text-6xl font-extrabold text-primary-900 leading-tight tracking-tight;
+  }
+
+  h2, .h2 {
+    @apply text-5xl font-bold text-primary-900 leading-tight tracking-tight;
+  }
+
+  h3, .h3 {
+    @apply text-4xl font-bold text-primary-900;
+  }
+
+  h4, .h4 {
+    @apply text-3xl font-semibold text-primary-900;
+  }
+
+  h5, .h5 {
+    @apply text-2xl font-semibold text-primary-900;
+  }
+
+  h6, .h6 {
+    @apply text-xl font-semibold text-primary-900;
+  }
+
+  .caption {
+    @apply text-xs uppercase tracking-wider font-medium text-primary-600;
+  }
+
+  .overline {
+    @apply text-xs uppercase tracking-widest font-semibold text-primary-600;
+  }
+
+  /* Responsive Typography */
+  @media (max-width: 640px) {
+    h1, .h1 { @apply text-5xl; }
+    h2, .h2 { @apply text-4xl; }
+    h3, .h3 { @apply text-3xl; }
+  }
+}
+
+@layer components {
+  /* Container */
+  .container {
+    @apply mx-auto px-4 sm:px-8 lg:px-16 max-w-7xl;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply px-6 py-3 bg-accent-600 text-white font-semibold rounded-lg
+           hover:bg-accent-500 active:bg-accent-400
+           focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2
+           transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-primary-100 text-primary-800 font-semibold rounded-lg
+           hover:bg-primary-200 border border-primary-300
+           focus:outline-none focus:ring-2 focus:ring-primary-500
+           transition-colors;
+  }
+
+  .btn-ghost {
+    @apply px-6 py-3 text-primary-700 font-semibold hover:bg-primary-100
+           rounded-lg transition-colors;
+  }
+
+  /* Button Sizes */
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+
+  .btn-md {
+    @apply px-6 py-3 text-base;
+  }
+
+  .btn-lg {
+    @apply px-8 py-4 text-lg;
+  }
+
+  /* Cards */
+  .card-project {
+    @apply bg-white rounded-xl shadow-sm hover:shadow-lg
+           transition-shadow duration-300 overflow-hidden
+           border border-primary-100;
+  }
+
+  .card-service {
+    @apply p-8 bg-gradient-to-br from-primary-50 to-white rounded-xl
+           border border-primary-200 hover:border-accent-400
+           transition-colors group;
+  }
+
+  /* Forms */
+  .input-field {
+    @apply w-full px-4 py-2 border border-primary-300 rounded-lg
+           focus:ring-2 focus:ring-accent-500 focus:border-accent-500
+           placeholder-primary-400 text-primary-800;
+  }
+
+  .input-label {
+    @apply block text-sm font-medium text-primary-700 mb-2;
+  }
+
+  .input-helper {
+    @apply text-xs text-primary-500 mt-1;
+  }
+
+  .select-field {
+    @apply w-full px-4 py-2 border border-primary-300 rounded-lg
+           bg-white text-primary-800 focus:ring-2 focus:ring-accent-500
+           appearance-none bg-right pr-10;
+  }
+
+  /* Tables */
+  .table-header {
+    @apply bg-primary-50 border-b border-primary-200;
+  }
+
+  .table-header-cell {
+    @apply px-6 py-3 text-left text-xs font-medium text-primary-600
+           uppercase tracking-wider;
+  }
+
+  .table-body {
+    @apply bg-white divide-y divide-primary-100;
+  }
+
+  .table-row {
+    @apply hover:bg-primary-50 transition-colors;
+  }
+
+  .table-cell {
+    @apply px-6 py-4 text-primary-700;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex px-2 py-1 text-xs font-medium rounded-full;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-error {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .badge-info {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  /* Navigation */
+  .nav-link {
+    @apply text-primary-700 hover:text-accent-600 font-medium transition-colors;
+  }
+
+  .nav-link-active {
+    @apply text-accent-600 font-semibold;
+  }
+
+  /* Loading States */
+  .spinner {
+    @apply animate-spin rounded-full h-8 w-8 border-b-2 border-accent-600;
+  }
+
+  .skeleton {
+    @apply bg-gradient-to-r from-primary-100 via-primary-200 to-primary-100
+           animate-shimmer bg-[length:200%_100%];
+  }
+
+  .progress-bar {
+    @apply w-full bg-primary-200 rounded-full h-2 overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply bg-accent-600 h-2 rounded-full transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  /* RTL Support */
+  .margin-start {
+    margin-inline-start: 1rem;
+  }
+
+  .margin-end {
+    margin-inline-end: 1rem;
+  }
+
+  .padding-start {
+    padding-inline-start: 1rem;
+  }
+
+  .padding-end {
+    padding-inline-end: 1rem;
+  }
+
+  .text-start {
+    text-align: start;
+  }
+
+  .text-end {
+    text-align: end;
+  }
+
+  /* RTL Specific */
+  [dir="rtl"] .rtl\:text-right {
+    text-align: right;
+  }
+
+  [dir="rtl"] .rtl\:flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  [dir="rtl"] .rtl\:space-x-reverse > * + * {
+    margin-right: var(--tw-space-x-reverse);
+    margin-left: 0;
+  }
+
+  [dir="rtl"] .rtl\:rotate-180 {
+    transform: rotate(180deg);
+  }
+
+  /* Transitions */
+  .transition-standard {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Accessibility */
+  .focus-visible:focus {
+    outline: 2px solid theme('colors.accent.500');
+    outline-offset: 2px;
+  }
+
+  .skip-link {
+    @apply absolute -top-10 left-0 bg-accent-600 text-white px-2 py-1 z-100;
+  }
+
+  .skip-link:focus {
+    @apply top-0;
+  }
+
+  /* Print Styles */
+  @media print {
+    nav, footer {
+      display: none;
+    }
+
+    * {
+      color: black !important;
+      box-shadow: none !important;
+      background: white !important;
+    }
+
+    .page-break {
+      page-break-after: always;
+    }
+
+    .no-break {
+      page-break-inside: avoid;
+    }
+  }
+
+  /* Dark Mode (Future Enhancement) */
+  .dark {
+    --bg-primary: #0F172A;
+    --text-primary: #F1F5F9;
+    --border-color: #334155;
+  }
+
+  .dark .dark\:bg-primary-900 {
+    background-color: #0F172A;
+  }
+
+  .dark .dark\:text-primary-100 {
+    color: #F1F5F9;
+  }
+
+  .dark .dark\:border-primary-700 {
+    border-color: #334155;
+  }
+}

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="#0e4a8e"/>
+
+  <!-- MTP Letters -->
+  <g fill="#ffffff">
+    <!-- M -->
+    <path d="M80 320V192h40l30 60 30-60h40v128h-35v-80l-25 50h-20l-25-50v80H80z"/>
+
+    <!-- T -->
+    <path d="M240 192h80v30h-25v98h-30v-98h-25v-30z"/>
+
+    <!-- P -->
+    <path d="M340 320V192h50c20 0 35 15 35 35v28c0 20-15 35-35 35h-15v30h-35zm35-65h15c5 0 10-5 10-10v-18c0-5-5-10-10-10h-15v38z"/>
+  </g>
+
+  <!-- Engineering Symbol (gear outline) -->
+  <g stroke="#f59e0b" stroke-width="8" fill="none">
+    <circle cx="256" cy="380" r="30"/>
+    <path d="M256 335 l0-15 l-13 7.5 l0 15 l13-7.5z M256 425 l0 15 l13-7.5 l0-15 l-13 7.5z"/>
+    <path d="M226 365 l-13-7.5 l-13 7.5 l13 7.5 l13-7.5z M286 365 l13-7.5 l13 7.5 l-13 7.5 l-13-7.5z"/>
+    <path d="M226 395 l-13 7.5 l13 7.5 l13-7.5 l-13-7.5z M286 395 l13 7.5 l-13 7.5 l-13-7.5 l13-7.5z"/>
+  </g>
+</svg>

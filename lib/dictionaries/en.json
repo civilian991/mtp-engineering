@@ -1,0 +1,78 @@
+{
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "projects": "Projects",
+    "careers": "Careers",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Mansour for Trade & Projects",
+    "subtitle": "Where Performance Meets Quality - Leading Electro-Mechanical Contractor Since 1980",
+    "cta": "Explore Our Projects"
+  },
+  "about": {
+    "title": "About MTP",
+    "history": "Company History",
+    "mission": "Our Mission",
+    "vision": "Our Vision",
+    "values": "Core Values",
+    "team": "Our Team"
+  },
+  "services": {
+    "title": "Our Services",
+    "electrical": "Electrical Installations",
+    "hvac": "HVAC Systems",
+    "plumbing": "Plumbing & Sanitary",
+    "fire_fighting": "Fire Fighting Systems",
+    "low_current": "Low Current Systems",
+    "project_management": "Project Management",
+    "description": "Complete Electro-Mechanical Contracting Services"
+  },
+  "projects": {
+    "title": "Our Projects",
+    "filter": "Filter Projects",
+    "all": "All Projects",
+    "recent": "Recent Projects",
+    "legacy": "Legacy Projects",
+    "viewDetails": "View Details",
+    "sector": "Sector",
+    "location": "Location",
+    "year": "Year",
+    "status": {
+      "completed": "Completed",
+      "ongoing": "Ongoing",
+      "planned": "Planned"
+    }
+  },
+  "careers": {
+    "title": "Careers",
+    "openings": "Current Openings",
+    "apply": "Apply Now",
+    "benefits": "Benefits",
+    "culture": "Company Culture"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send Message"
+    },
+    "info": {
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Business Hours"
+    }
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}
