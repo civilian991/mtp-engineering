@@ -2,12 +2,12 @@ import { Metadata } from 'next'
 import { getDictionary } from '@/lib/dictionary'
 import { Locale } from '@/lib/i18n'
 import {
-  Building2,
-  Route,
-  ClipboardCheck,
-  Users,
-  Leaf,
-  Shield,
+  Zap,
+  Wind,
+  Droplets,
+  Flame,
+  Wrench,
+  Gauge,
   ArrowRight
 } from 'lucide-react'
 import Card from '@/components/ui/Card'
@@ -37,87 +37,87 @@ export default async function ServicesPage({ params }: Props) {
 
   const services = [
     {
-      icon: <Building2 className="h-12 w-12" />,
-      title: isRTL ? 'الهندسة المدنية' : 'Civil Engineering',
+      icon: <Zap className="h-12 w-12" />,
+      title: isRTL ? 'الأعمال الكهربائية' : 'Electrical Works',
       description: isRTL
-        ? 'التصميم الهيكلي والتحليل وهندسة الأساسات وتصميم الجسور والطرق السريعة'
-        : 'Structural design and analysis, foundation engineering, bridge and highway design',
-      slug: 'civil-engineering',
+        ? 'أنظمة الطاقة والتوزيع، الإنارة، أنظمة الجهد المنخفض والعالي'
+        : 'Power systems, distribution, lighting, low and high voltage systems',
+      slug: 'electrical',
       features: [
-        isRTL ? 'التصميم والتحليل الإنشائي' : 'Structural design and analysis',
-        isRTL ? 'هندسة الأساسات' : 'Foundation engineering',
-        isRTL ? 'تصميم الجسور والطرق' : 'Bridge and highway design',
-        isRTL ? 'الفحوصات الجيوتقنية' : 'Geotechnical investigations',
+        isRTL ? 'أنظمة توزيع الطاقة' : 'Power distribution systems',
+        isRTL ? 'أنظمة الإنارة الداخلية والخارجية' : 'Indoor and outdoor lighting',
+        isRTL ? 'لوحات التحكم والتوزيع' : 'Control panels and switchboards',
+        isRTL ? 'أنظمة الطاقة الاحتياطية' : 'Backup power systems',
       ],
     },
     {
-      icon: <Route className="h-12 w-12" />,
-      title: isRTL ? 'تطوير البنية التحتية' : 'Infrastructure Development',
+      icon: <Wind className="h-12 w-12" />,
+      title: isRTL ? 'أنظمة التكييف والتهوية' : 'HVAC Systems',
       description: isRTL
-        ? 'أنظمة النقل وشبكات المرافق والتخطيط العمراني وحلول المدن الذكية'
-        : 'Transportation systems, utility networks, urban planning, and smart city solutions',
-      slug: 'infrastructure',
+        ? 'أنظمة التكييف المركزي، التهوية، التبريد الصناعي والتحكم البيئي'
+        : 'Central air conditioning, ventilation, industrial cooling, and environmental control',
+      slug: 'hvac',
       features: [
-        isRTL ? 'أنظمة النقل' : 'Transportation systems',
-        isRTL ? 'شبكات المرافق' : 'Utility networks',
-        isRTL ? 'حلول المدن الذكية' : 'Smart city solutions',
-        isRTL ? 'البنية التحتية المستدامة' : 'Sustainable infrastructure',
+        isRTL ? 'أنظمة التكييف المركزي' : 'Central air conditioning',
+        isRTL ? 'أنظمة التهوية والعادم' : 'Ventilation and exhaust systems',
+        isRTL ? 'غرف التبريد والتجميد' : 'Cold rooms and freezers',
+        isRTL ? 'أنظمة التحكم الآلي' : 'Building automation systems',
       ],
     },
     {
-      icon: <ClipboardCheck className="h-12 w-12" />,
-      title: isRTL ? 'إدارة المشاريع' : 'Project Management',
+      icon: <Droplets className="h-12 w-12" />,
+      title: isRTL ? 'الأعمال الصحية' : 'Plumbing Systems',
       description: isRTL
-        ? 'التخطيط والجدولة والتحكم في التكاليف وإدارة المخاطر وضمان الجودة'
-        : 'Project planning, cost control, risk management, quality assurance, and supervision',
-      slug: 'project-management',
+        ? 'أنظمة المياه والصرف الصحي، معالجة المياه، أنظمة الري والخزانات'
+        : 'Water supply, drainage, water treatment, irrigation systems, and tanks',
+      slug: 'plumbing',
       features: [
-        isRTL ? 'تخطيط وجدولة المشاريع' : 'Project planning and scheduling',
-        isRTL ? 'التحكم في التكاليف' : 'Cost control and estimation',
-        isRTL ? 'إدارة المخاطر' : 'Risk management',
-        isRTL ? 'الإشراف على البناء' : 'Construction supervision',
+        isRTL ? 'شبكات المياه النظيفة' : 'Clean water networks',
+        isRTL ? 'أنظمة الصرف الصحي' : 'Sewage and drainage systems',
+        isRTL ? 'محطات معالجة المياه' : 'Water treatment plants',
+        isRTL ? 'أنظمة الري الحديثة' : 'Modern irrigation systems',
       ],
     },
     {
-      icon: <Users className="h-12 w-12" />,
-      title: isRTL ? 'الاستشارات الفنية' : 'Technical Consulting',
+      icon: <Flame className="h-12 w-12" />,
+      title: isRTL ? 'أنظمة مكافحة الحريق' : 'Fire Fighting Systems',
       description: isRTL
-        ? 'دراسات الجدوى والعناية الواجبة الفنية ومراجعة التصميم وهندسة القيمة'
-        : 'Feasibility studies, technical due diligence, design review, and value engineering',
-      slug: 'consulting',
+        ? 'أنظمة الإطفاء، الإنذار، الرشاشات الآلية وأنظمة الحماية من الحرائق'
+        : 'Fire suppression, alarm systems, sprinklers, and fire protection systems',
+      slug: 'fire-fighting',
       features: [
-        isRTL ? 'دراسات الجدوى' : 'Feasibility studies',
-        isRTL ? 'العناية الواجبة الفنية' : 'Technical due diligence',
-        isRTL ? 'مراجعة وتحسين التصميم' : 'Design review and optimization',
-        isRTL ? 'هندسة القيمة' : 'Value engineering',
+        isRTL ? 'أنظمة الرشاشات الآلية' : 'Automatic sprinkler systems',
+        isRTL ? 'أنظمة إنذار الحريق' : 'Fire alarm and detection',
+        isRTL ? 'أنظمة الإطفاء بالغاز' : 'Gas suppression systems',
+        isRTL ? 'مضخات ومعدات الإطفاء' : 'Fire pumps and equipment',
       ],
     },
     {
-      icon: <Leaf className="h-12 w-12" />,
-      title: isRTL ? 'الهندسة البيئية' : 'Environmental Engineering',
+      icon: <Wrench className="h-12 w-12" />,
+      title: isRTL ? 'الصيانة والتشغيل' : 'Maintenance & Operation',
       description: isRTL
-        ? 'تقييمات الأثر البيئي واستشارات الاستدامة وحلول معالجة المياه'
-        : 'Environmental impact assessments, sustainability consulting, and water treatment',
-      slug: 'environmental',
+        ? 'الصيانة الوقائية والتصحيحية، إدارة المرافق وخدمات التشغيل المتكاملة'
+        : 'Preventive and corrective maintenance, facility management, and integrated operation services',
+      slug: 'maintenance',
       features: [
-        isRTL ? 'تقييمات الأثر البيئي' : 'Environmental impact assessments',
-        isRTL ? 'استشارات الاستدامة' : 'Sustainability consulting',
-        isRTL ? 'حلول معالجة المياه' : 'Water treatment solutions',
-        isRTL ? 'شهادة المباني الخضراء' : 'Green building certification',
+        isRTL ? 'الصيانة الوقائية المجدولة' : 'Scheduled preventive maintenance',
+        isRTL ? 'الصيانة التصحيحية السريعة' : 'Rapid corrective maintenance',
+        isRTL ? 'إدارة المرافق المتكاملة' : 'Integrated facility management',
+        isRTL ? 'خدمات الدعم الفني 24/7' : '24/7 technical support',
       ],
     },
     {
-      icon: <Shield className="h-12 w-12" />,
-      title: isRTL ? 'ضمان الجودة' : 'Quality Assurance',
+      icon: <Gauge className="h-12 w-12" />,
+      title: isRTL ? 'أنظمة التحكم والأتمتة' : 'Control & Automation',
       description: isRTL
-        ? 'الاختبار والفحص والتحقق من الامتثال وأنظمة مراقبة الجودة'
-        : 'Testing and inspection, compliance verification, and quality control systems',
-      slug: 'quality-assurance',
+        ? 'أنظمة BMS، التحكم الآلي، أنظمة SCADA والتكامل الذكي للمباني'
+        : 'BMS systems, automation control, SCADA systems, and smart building integration',
+      slug: 'automation',
       features: [
-        isRTL ? 'الاختبار والفحص' : 'Testing and inspection',
-        isRTL ? 'التحقق من الامتثال' : 'Compliance verification',
-        isRTL ? 'أنظمة مراقبة الجودة' : 'Quality control systems',
-        isRTL ? 'مراقبة الأداء' : 'Performance monitoring',
+        isRTL ? 'أنظمة إدارة المباني BMS' : 'Building Management Systems',
+        isRTL ? 'أنظمة SCADA الصناعية' : 'Industrial SCADA systems',
+        isRTL ? 'التكامل مع أنظمة IoT' : 'IoT systems integration',
+        isRTL ? 'لوحات التحكم الذكية' : 'Smart control panels',
       ],
     },
   ]
@@ -125,17 +125,17 @@ export default async function ServicesPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-secondary-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
+      <section className="relative bg-gradient-to-br from-secondary-800 to-secondary-900 text-white">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-900/30 to-transparent"></div>
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              {isRTL ? 'خدماتنا الهندسية' : 'Our Engineering Services'}
+              {isRTL ? 'خدماتنا الكهروميكانيكية' : 'Our Electro-Mechanical Services'}
             </h1>
-            <p className="text-xl opacity-90">
+            <p className="text-xl text-primary-300">
               {isRTL
-                ? 'حلول هندسية شاملة تدعم رؤية المملكة 2030'
-                : 'Comprehensive engineering solutions supporting Saudi Vision 2030'}
+                ? 'حلول كهروميكانيكية متكاملة منذ عام 1980'
+                : 'Integrated Electro-Mechanical Solutions Since 1980'}
             </p>
           </div>
         </div>
@@ -146,12 +146,12 @@ export default async function ServicesPage({ params }: Props) {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-3xl font-bold text-secondary-900 mb-4">
-              {isRTL ? 'خبرة شاملة في جميع التخصصات' : 'Comprehensive Expertise Across Disciplines'}
+              {isRTL ? 'خبرة متكاملة في الأنظمة الكهروميكانيكية' : 'Integrated Expertise in Electro-Mechanical Systems'}
             </h2>
             <p className="text-lg text-secondary-600">
               {isRTL
-                ? 'نقدم مجموعة كاملة من الخدمات الهندسية لدعم المشاريع من المفهوم إلى الإنجاز'
-                : 'We offer a full spectrum of engineering services to support projects from concept to completion'}
+                ? 'نقدم حلولاً كهروميكانيكية شاملة لجميع أنواع المباني والمنشآت'
+                : 'We provide comprehensive electro-mechanical solutions for all types of buildings and facilities'}
             </p>
           </div>
 
@@ -191,7 +191,7 @@ export default async function ServicesPage({ params }: Props) {
             <div className="grid md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-primary-600">40+</span>
+                  <span className="text-2xl font-bold text-primary-600">44+</span>
                 </div>
                 <h4 className="font-semibold text-secondary-900 mb-2">
                   {isRTL ? 'سنوات من الخبرة' : 'Years of Experience'}
@@ -270,7 +270,7 @@ export default async function ServicesPage({ params }: Props) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-br from-primary-600 to-primary-800 text-white">
+      <section className="py-16 bg-gradient-to-br from-primary-700 to-primary-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-4">
