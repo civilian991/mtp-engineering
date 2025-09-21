@@ -162,6 +162,7 @@ export default function SearchPage({ params }: Props) {
       setSearchTerm(query)
       performSearch(query)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
   const performSearch = (term: string) => {
