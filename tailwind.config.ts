@@ -9,6 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Black & Gold Theme from new design
+        black: '#0B0B0C',
+        gold: {
+          300: '#E8D49C',   // Lighter gold
+          400: '#D4C082',   // Light gold
+          500: '#C9A646',   // MTP Gold - Primary
+          600: '#B2903E',   // Medium gold
+        },
+        muted: {
+          100: '#F5F5F5',
+          200: '#E5E5E5',
+          300: '#D4D4D4',
+          400: '#A3A3A3',
+          600: '#3E3E40',
+          900: '#1A1A1C',
+        },
         // Primary Colors - MTP Gold Theme
         primary: {
           50: '#FDFCF8',    // Background white with gold tint

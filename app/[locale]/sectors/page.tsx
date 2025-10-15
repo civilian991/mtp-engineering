@@ -1,6 +1,9 @@
-import { Metadata } from 'next'
-import { getDictionary } from '@/lib/dictionary'
+'use client'
+
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import { Locale } from '@/lib/i18n'
+import Link from 'next/link'
 import {
   Building,
   Fuel,
@@ -10,397 +13,409 @@ import {
   Home,
   Factory,
   Droplets,
-  ArrowRight
+  ArrowRight,
+  Zap
 } from 'lucide-react'
-import Card from '@/components/ui/Card'
-import Link from 'next/link'
-import Button from '@/components/ui/Button'
 
-type Props = {
-  params: Promise<{ locale: string }>
-}
+export default function SectorsPage() {
+  const params = useParams()
+  const locale = (params.locale as Locale) || 'en'
+  const [isVisible, setIsVisible] = useState(false)
+  const [hoveredSector, setHoveredSector] = useState<number | null>(null)
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params
-  const isRTL = locale === 'ar'
-
-  return {
-    title: isRTL ? 'القطاعات | MTP Engineering' : 'Sectors | MTP Engineering',
-    description: isRTL
-      ? 'خبرة واسعة في القطاعات الحكومية والنفط والغاز والنقل والرعاية الصحية والتعليم والصناعة'
-      : 'Extensive expertise across government, oil & gas, transportation, healthcare, education, and industrial sectors',
-  }
-}
-
-export default async function SectorsPage({ params }: Props) {
-  const { locale } = await params
-  const isRTL = locale === 'ar'
-  const dictionary = await getDictionary(locale as Locale)
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
 
   const sectors = [
     {
-      icon: <Building className="h-12 w-12" />,
-      title: isRTL ? 'الحكومي' : 'Government',
-      description: isRTL
-        ? 'مشاريع الوزارات والهيئات الحكومية والبنية التحتية العامة والبلدية'
-        : 'Ministry and agency projects, public infrastructure, and municipal developments',
+      icon: Building,
+      title: { en: 'Government', ar: 'الحكومي' },
+      description: {
+        en: 'Ministry and agency projects, public infrastructure, and municipal developments',
+        ar: 'مشاريع الوزارات والهيئات الحكومية والبنية التحتية العامة والبلدية'
+      },
       slug: 'government',
-      stats: {
-        projects: '150+',
-        clients: isRTL ? '25 جهة حكومية' : '25 Government Entities',
-      },
+      stats: { projects: '150+', value: '2.5B SAR' },
+      color: 'from-gold-600 to-gold-400',
       highlights: [
-        isRTL ? 'المباني الحكومية' : 'Government buildings',
-        isRTL ? 'البنية التحتية العامة' : 'Public infrastructure',
-        isRTL ? 'المشاريع البلدية' : 'Municipal projects',
-        isRTL ? 'المرافق العامة' : 'Public facilities',
-      ],
+        { en: 'Government buildings', ar: 'المباني الحكومية' },
+        { en: 'Public infrastructure', ar: 'البنية التحتية العامة' },
+        { en: 'Municipal projects', ar: 'المشاريع البلدية' }
+      ]
     },
     {
-      icon: <Fuel className="h-12 w-12" />,
-      title: isRTL ? 'النفط والغاز' : 'Oil & Gas',
-      description: isRTL
-        ? 'مصافي التكرير والبنية التحتية لخطوط الأنابيب ومرافق المعالجة'
-        : 'Refineries, pipeline infrastructure, and processing facilities',
+      icon: Fuel,
+      title: { en: 'Oil & Gas', ar: 'النفط والغاز' },
+      description: {
+        en: 'Refineries, pipeline infrastructure, and processing facilities',
+        ar: 'مصافي التكرير والبنية التحتية لخطوط الأنابيب ومرافق المعالجة'
+      },
       slug: 'oil-gas',
-      stats: {
-        projects: '80+',
-        clients: isRTL ? 'أرامكو وشركاء' : 'Aramco & Partners',
-      },
+      stats: { projects: '80+', value: '3.8B SAR' },
+      color: 'from-gold-500 to-gold-400',
       highlights: [
-        isRTL ? 'المصافي' : 'Refineries',
-        isRTL ? 'خطوط الأنابيب' : 'Pipeline infrastructure',
-        isRTL ? 'مرافق المعالجة' : 'Processing facilities',
-        isRTL ? 'محطات التوزيع' : 'Distribution stations',
-      ],
+        { en: 'Refineries', ar: 'المصافي' },
+        { en: 'Pipeline infrastructure', ar: 'خطوط الأنابيب' },
+        { en: 'Processing facilities', ar: 'مرافق المعالجة' }
+      ]
     },
     {
-      icon: <Plane className="h-12 w-12" />,
-      title: isRTL ? 'النقل' : 'Transportation',
-      description: isRTL
-        ? 'المطارات والموانئ البحرية والسكك الحديدية والطرق السريعة'
-        : 'Airports, seaports, railways, and highway systems',
+      icon: Plane,
+      title: { en: 'Transportation', ar: 'النقل' },
+      description: {
+        en: 'Airports, seaports, railways, and highway systems',
+        ar: 'المطارات والموانئ البحرية والسكك الحديدية والطرق السريعة'
+      },
       slug: 'transportation',
-      stats: {
-        projects: '120+',
-        clients: isRTL ? 'هيئة الطيران والنقل' : 'Aviation & Transport Authorities',
-      },
+      stats: { projects: '120+', value: '4.2B SAR' },
+      color: 'from-gold-600 to-gold-500',
       highlights: [
-        isRTL ? 'المطارات' : 'Airports',
-        isRTL ? 'الموانئ البحرية' : 'Seaports',
-        isRTL ? 'السكك الحديدية' : 'Railways',
-        isRTL ? 'الطرق السريعة' : 'Highways',
-      ],
+        { en: 'Airports', ar: 'المطارات' },
+        { en: 'Seaports', ar: 'الموانئ البحرية' },
+        { en: 'Railways', ar: 'السكك الحديدية' }
+      ]
     },
     {
-      icon: <Heart className="h-12 w-12" />,
-      title: isRTL ? 'الرعاية الصحية' : 'Healthcare',
-      description: isRTL
-        ? 'المستشفيات والمدن الطبية والعيادات والمراكز الصحية'
-        : 'Hospitals, medical cities, clinics, and healthcare centers',
+      icon: Heart,
+      title: { en: 'Healthcare', ar: 'الرعاية الصحية' },
+      description: {
+        en: 'Hospitals, medical cities, clinics, and healthcare centers',
+        ar: 'المستشفيات والمدن الطبية والعيادات والمراكز الصحية'
+      },
       slug: 'healthcare',
-      stats: {
-        projects: '60+',
-        clients: isRTL ? 'وزارة الصحة' : 'Ministry of Health',
-      },
+      stats: { projects: '60+', value: '1.8B SAR' },
+      color: 'from-gold-500 to-gold-400',
       highlights: [
-        isRTL ? 'المستشفيات' : 'Hospitals',
-        isRTL ? 'المدن الطبية' : 'Medical cities',
-        isRTL ? 'العيادات المتخصصة' : 'Specialized clinics',
-        isRTL ? 'مراكز الأبحاث' : 'Research centers',
-      ],
+        { en: 'Hospitals', ar: 'المستشفيات' },
+        { en: 'Medical cities', ar: 'المدن الطبية' },
+        { en: 'Research centers', ar: 'مراكز الأبحاث' }
+      ]
     },
     {
-      icon: <GraduationCap className="h-12 w-12" />,
-      title: isRTL ? 'التعليم' : 'Education',
-      description: isRTL
-        ? 'الجامعات والمدارس ومراكز التدريب والمرافق التعليمية'
-        : 'Universities, schools, training centers, and educational facilities',
+      icon: GraduationCap,
+      title: { en: 'Education', ar: 'التعليم' },
+      description: {
+        en: 'Universities, schools, training centers, and educational facilities',
+        ar: 'الجامعات والمدارس ومراكز التدريب والمرافق التعليمية'
+      },
       slug: 'education',
-      stats: {
-        projects: '90+',
-        clients: isRTL ? 'وزارة التعليم والجامعات' : 'Ministry of Education & Universities',
-      },
+      stats: { projects: '90+', value: '2.1B SAR' },
+      color: 'from-gold-600 to-gold-400',
       highlights: [
-        isRTL ? 'الجامعات' : 'Universities',
-        isRTL ? 'المدارس' : 'Schools',
-        isRTL ? 'مراكز التدريب' : 'Training centers',
-        isRTL ? 'المكتبات' : 'Libraries',
-      ],
+        { en: 'Universities', ar: 'الجامعات' },
+        { en: 'Schools', ar: 'المدارس' },
+        { en: 'Libraries', ar: 'المكتبات' }
+      ]
     },
     {
-      icon: <Home className="h-12 w-12" />,
-      title: isRTL ? 'التجاري والسكني' : 'Commercial & Residential',
-      description: isRTL
-        ? 'المباني المكتبية ومراكز التسوق والمجمعات السكنية والتطورات متعددة الاستخدامات'
-        : 'Office buildings, shopping centers, residential complexes, and mixed-use developments',
+      icon: Home,
+      title: { en: 'Commercial & Residential', ar: 'التجاري والسكني' },
+      description: {
+        en: 'Office buildings, shopping centers, residential complexes, and mixed-use developments',
+        ar: 'المباني المكتبية ومراكز التسوق والمجمعات السكنية والتطورات متعددة الاستخدامات'
+      },
       slug: 'commercial-residential',
-      stats: {
-        projects: '200+',
-        clients: isRTL ? 'مطورون خاصون' : 'Private Developers',
-      },
+      stats: { projects: '200+', value: '5.5B SAR' },
+      color: 'from-gold-500 to-gold-400',
       highlights: [
-        isRTL ? 'المباني المكتبية' : 'Office buildings',
-        isRTL ? 'مراكز التسوق' : 'Shopping centers',
-        isRTL ? 'المجمعات السكنية' : 'Residential complexes',
-        isRTL ? 'التطويرات المختلطة' : 'Mixed-use developments',
-      ],
+        { en: 'Office buildings', ar: 'المباني المكتبية' },
+        { en: 'Shopping centers', ar: 'مراكز التسوق' },
+        { en: 'Residential complexes', ar: 'المجمعات السكنية' }
+      ]
     },
     {
-      icon: <Factory className="h-12 w-12" />,
-      title: isRTL ? 'الصناعي' : 'Industrial',
-      description: isRTL
-        ? 'مصانع التصنيع والمستودعات والمدن الصناعية والمرافق اللوجستية'
-        : 'Manufacturing plants, warehouses, industrial cities, and logistics facilities',
+      icon: Factory,
+      title: { en: 'Industrial', ar: 'الصناعي' },
+      description: {
+        en: 'Manufacturing plants, warehouses, industrial cities, and logistics facilities',
+        ar: 'مصانع التصنيع والمستودعات والمدن الصناعية والمرافق اللوجستية'
+      },
       slug: 'industrial',
-      stats: {
-        projects: '110+',
-        clients: isRTL ? 'شركات صناعية' : 'Industrial Companies',
-      },
+      stats: { projects: '110+', value: '3.2B SAR' },
+      color: 'from-gold-600 to-gold-500',
       highlights: [
-        isRTL ? 'المصانع' : 'Manufacturing plants',
-        isRTL ? 'المستودعات' : 'Warehouses',
-        isRTL ? 'المدن الصناعية' : 'Industrial cities',
-        isRTL ? 'المرافق اللوجستية' : 'Logistics facilities',
-      ],
+        { en: 'Manufacturing plants', ar: 'المصانع' },
+        { en: 'Warehouses', ar: 'المستودعات' },
+        { en: 'Industrial cities', ar: 'المدن الصناعية' }
+      ]
     },
     {
-      icon: <Droplets className="h-12 w-12" />,
-      title: isRTL ? 'المياه والمرافق' : 'Water & Utilities',
-      description: isRTL
-        ? 'محطات معالجة المياه والبنية التحتية للطاقة وإدارة النفايات'
-        : 'Water treatment plants, power infrastructure, and waste management',
-      slug: 'utilities',
-      stats: {
-        projects: '70+',
-        clients: isRTL ? 'شركات المرافق' : 'Utility Companies',
+      icon: Droplets,
+      title: { en: 'Water & Utilities', ar: 'المياه والمرافق' },
+      description: {
+        en: 'Water treatment plants, power infrastructure, and waste management',
+        ar: 'محطات معالجة المياه والبنية التحتية للطاقة وإدارة النفايات'
       },
+      slug: 'utilities',
+      stats: { projects: '70+', value: '1.6B SAR' },
+      color: 'from-gold-500 to-gold-400',
       highlights: [
-        isRTL ? 'محطات معالجة المياه' : 'Water treatment plants',
-        isRTL ? 'البنية التحتية للطاقة' : 'Power infrastructure',
-        isRTL ? 'إدارة النفايات' : 'Waste management',
-        isRTL ? 'شبكات التوزيع' : 'Distribution networks',
-      ],
-    },
+        { en: 'Water treatment', ar: 'معالجة المياه' },
+        { en: 'Power infrastructure', ar: 'البنية التحتية للطاقة' },
+        { en: 'Waste management', ar: 'إدارة النفايات' }
+      ]
+    }
   ]
 
-  const stats = [
-    { value: '15+', label: isRTL ? 'قطاع مخدوم' : 'Sectors Served' },
-    { value: '500+', label: isRTL ? 'مشروع منجز' : 'Projects Completed' },
-    { value: '100+', label: isRTL ? 'عميل راضي' : 'Satisfied Clients' },
-    { value: '40+', label: isRTL ? 'سنة من الخبرة' : 'Years of Experience' },
+  const vision2030Projects = [
+    { name: 'NEOM', description: { en: 'City of the Future', ar: 'مدينة المستقبل' } },
+    { name: 'Red Sea', description: { en: 'Luxury Tourism Hub', ar: 'وجهة سياحية فاخرة' } },
+    { name: 'Qiddiya', description: { en: 'Entertainment Capital', ar: 'عاصمة الترفيه' } },
+    { name: 'ROSHN', description: { en: 'Housing Development', ar: 'تطوير الإسكان' } }
   ]
 
   return (
-    <div className="min-h-screen bg-secondary-50">
+    <div className="min-h-screen bg-black">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              {isRTL ? 'قطاعات متنوعة، خبرة عميقة' : 'Diverse Sectors, Deep Expertise'}
-            </h1>
-            <p className="text-xl opacity-90">
-              {isRTL
-                ? 'نخدم جميع القطاعات الرئيسية في المملكة العربية السعودية بحلول هندسية مبتكرة'
-                : 'Serving all major sectors in Saudi Arabia with innovative engineering solutions'}
-            </p>
-          </div>
+      <section className="relative py-24 px-6 overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `repeating-linear-gradient(90deg, transparent, transparent 35px, #C9A646 35px, #C9A646 36px),
+                             repeating-linear-gradient(0deg, transparent, transparent 35px, #C9A646 35px, #C9A646 36px)`
+          }}></div>
         </div>
-      </section>
 
-      {/* Stats Section */}
-      <section className="py-8 bg-white border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl font-bold text-primary-600">{stat.value}</div>
-                <div className="text-secondary-600 text-sm">{stat.label}</div>
-              </div>
-            ))}
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <span className="text-gold-500 text-sm font-bold uppercase tracking-[0.3em] bg-gold-500/10 px-4 py-2 rounded-full border border-gold-500/30 inline-block mb-6">
+              {locale === 'ar' ? 'قطاعاتنا' : 'Our Sectors'}
+            </span>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white mb-6 uppercase tracking-tight">
+              {locale === 'ar' ? 'خبرة في' : 'Expertise Across'} <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-600 to-gold-400">
+                {locale === 'ar' ? 'كل قطاع' : 'All Sectors'}
+              </span>
+            </h1>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              {locale === 'ar'
+                ? 'نخدم جميع القطاعات الرئيسية في المملكة العربية السعودية بحلول هندسية متطورة'
+                : 'Serving all major sectors in Saudi Arabia with advanced engineering solutions'
+              }
+            </p>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-12">
+              {[
+                { number: '8', label: { en: 'Major Sectors', ar: 'قطاعات رئيسية' } },
+                { number: '500+', label: { en: 'Projects Completed', ar: 'مشروع منجز' } },
+                { number: '25B+', label: { en: 'SAR Project Value', ar: 'ريال قيمة المشاريع' } },
+                { number: '100+', label: { en: 'Active Clients', ar: 'عميل نشط' } }
+              ].map((stat, index) => (
+                <div key={index} className="group">
+                  <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold-600 to-gold-400 mb-2">
+                    {stat.number}
+                  </div>
+                  <p className="text-gray-400 text-sm">{stat.label[locale]}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Sectors Grid */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold text-secondary-900 mb-4">
-              {isRTL ? 'قطاعاتنا الرئيسية' : 'Our Key Sectors'}
+      <section className="py-16 px-6 sm:px-8 lg:px-12">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            {locale === 'ar' ? 'قطاعاتنا' : 'Our'} <span className="text-gold-500">{locale === 'ar' ? 'المتخصصة' : 'Specialized Sectors'}</span>
+          </h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {sectors.map((sector, index) => {
+              const Icon = sector.icon
+              return (
+                <div
+                  key={index}
+                  className="group relative bg-gradient-to-b from-gray-900 to-black rounded-xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-gold-500/30 transition-all duration-700 hover:-translate-y-3 border border-gray-800 hover:border-gold-500/50"
+                  onMouseEnter={() => setHoveredSector(index)}
+                  onMouseLeave={() => setHoveredSector(null)}
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  {/* Top accent */}
+                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${sector.color}`}></div>
+
+                  <div className="p-6 relative">
+                    {/* Icon */}
+                    <div className="w-16 h-16 mb-4 relative">
+                      <div className={`absolute inset-0 bg-gradient-to-r ${sector.color} rounded-xl opacity-20 group-hover:opacity-30 blur-xl transition-opacity duration-500`}></div>
+                      <div className="relative bg-gradient-to-br from-gold-500/20 to-gold-500/5 rounded-xl p-4 border border-gold-500/30 group-hover:border-gold-500/50 transition-colors duration-500">
+                        <Icon className="w-full h-full text-gold-500 group-hover:text-gold-400 transition-colors duration-500" />
+                      </div>
+                    </div>
+
+                    {/* Title & Description */}
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gold-500 transition-colors">
+                      {sector.title[locale]}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                      {sector.description[locale]}
+                    </p>
+
+                    {/* Stats */}
+                    <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-800">
+                      <div>
+                        <div className="text-gold-500 font-bold">{sector.stats.projects}</div>
+                        <div className="text-xs text-gray-500">{locale === 'ar' ? 'مشروع' : 'Projects'}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-gold-500 font-bold">{sector.stats.value}</div>
+                        <div className="text-xs text-gray-500">{locale === 'ar' ? 'القيمة' : 'Value'}</div>
+                      </div>
+                    </div>
+
+                    {/* Highlights */}
+                    <div className={`space-y-1 transition-all duration-500 ${
+                      hoveredSector === index ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0 overflow-hidden'
+                    }`}>
+                      {sector.highlights.map((highlight, idx) => (
+                        <div key={idx} className="flex items-center text-xs text-gray-300">
+                          <div className="w-1.5 h-1.5 bg-gold-500 rounded-full mr-2"></div>
+                          {highlight[locale]}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Action Button */}
+                    <Link
+                      href={`/${locale}/sectors/${sector.slug}`}
+                      className="group/btn relative inline-flex items-center justify-center w-full mt-4 py-2 text-sm font-bold text-gold-500 border border-gold-500/50 rounded-lg overflow-hidden transition-all duration-500 hover:text-black"
+                    >
+                      <span className="absolute inset-0 bg-gradient-to-r from-gold-600 to-gold-400 transform scale-x-0 group-hover/btn:scale-x-100 transition-transform duration-500 origin-left"></span>
+                      <span className="relative flex items-center">
+                        {locale === 'ar' ? 'استكشف القطاع' : 'Explore Sector'}
+                        <ArrowRight className={`w-4 h-4 ml-2 ${locale === 'ar' ? 'rotate-180' : ''}`} />
+                      </span>
+                    </Link>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Vision 2030 Section */}
+      <section className="py-16 px-6 sm:px-8 lg:px-12 bg-gradient-to-b from-black via-gray-950 to-black">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              {locale === 'ar' ? 'نساهم في' : 'Contributing to'} <span className="text-gold-500">{locale === 'ar' ? 'رؤية 2030' : 'Vision 2030'}</span>
             </h2>
-            <p className="text-lg text-secondary-600">
-              {isRTL
-                ? 'خبرة متخصصة في كل قطاع، مع فهم عميق للمتطلبات والتحديات الفريدة'
-                : 'Specialized expertise in each sector, with deep understanding of unique requirements and challenges'}
+            <p className="text-xl text-gray-400">
+              {locale === 'ar'
+                ? 'نفخر بدورنا في مشاريع رؤية المملكة الطموحة'
+                : 'Proud to play our part in the Kingdom\'s ambitious vision projects'
+              }
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {sectors.map((sector, index) => (
-              <Card
+          <div className="grid md:grid-cols-4 gap-6">
+            {vision2030Projects.map((project, index) => (
+              <div
                 key={index}
-                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="group relative bg-gradient-to-b from-gray-900/50 to-black/50 rounded-lg p-6 border border-gray-800 hover:border-gold-500/50 transition-all duration-500"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="text-primary-600 mb-4">{sector.icon}</div>
-                <h3 className="text-xl font-semibold text-secondary-900 mb-3">{sector.title}</h3>
-                <p className="text-secondary-600 text-sm mb-4">{sector.description}</p>
-
-                <div className="mb-4 pb-4 border-b">
-                  <div className="text-sm text-secondary-500 mb-1">
-                    <span className="font-semibold text-primary-600">{sector.stats.projects}</span>
-                    {isRTL ? ' مشروع' : ' Projects'}
-                  </div>
-                  <div className="text-xs text-secondary-500">{sector.stats.clients}</div>
-                </div>
-
-                <ul className="space-y-1 mb-6">
-                  {sector.highlights.slice(0, 3).map((highlight, idx) => (
-                    <li key={idx} className="flex items-start text-xs text-secondary-600">
-                      <span className="text-primary-600 mr-2 rtl:ml-2 rtl:mr-0">•</span>
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
-
-                <Link href={`/${locale}/sectors/${sector.slug}`}>
-                  <Button
-                    as="span"
-                    variant="outline"
-                    size="sm"
-                    className="w-full group-hover:bg-primary-600 group-hover:text-white"
-                  >
-                    {isRTL ? 'استكشف القطاع' : 'Explore Sector'}
-                    <ArrowRight className={`h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0 ${isRTL ? 'rotate-180' : ''}`} />
-                  </Button>
-                </Link>
-              </Card>
+                <Zap className="w-8 h-8 text-gold-500 mb-3" />
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gold-500 transition-colors">
+                  {project.name}
+                </h3>
+                <p className="text-sm text-gray-400">
+                  {project.description[locale]}
+                </p>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-gold-600 to-gold-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Vision 2030 Alignment */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="max-w-4xl mx-auto bg-gradient-to-r from-primary-600 to-primary-700 text-white">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold mb-4">
-                {isRTL ? 'متوافقون مع رؤية 2030' : 'Aligned with Vision 2030'}
-              </h2>
-              <p className="text-xl mb-6 opacity-90">
-                {isRTL
-                  ? 'نساهم في تحقيق رؤية المملكة 2030 من خلال مشاريع تحويلية في جميع القطاعات'
-                  : 'Contributing to Saudi Vision 2030 through transformative projects across all sectors'}
-              </p>
-              <div className="grid md:grid-cols-3 gap-6 text-center">
-                <div>
-                  <div className="text-2xl font-bold mb-1">NEOM</div>
-                  <div className="text-primary-100 text-sm">
-                    {isRTL ? 'مدينة المستقبل' : 'City of the Future'}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold mb-1">Red Sea</div>
-                  <div className="text-primary-100 text-sm">
-                    {isRTL ? 'مشروع البحر الأحمر' : 'Red Sea Project'}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold mb-1">Qiddiya</div>
-                  <div className="text-primary-100 text-sm">
-                    {isRTL ? 'عاصمة الترفيه' : 'Entertainment Capital'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </section>
-
       {/* Success Stories */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-secondary-900 text-center mb-12">
-              {isRTL ? 'قصص نجاح من قطاعات مختلفة' : 'Success Stories Across Sectors'}
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <Card>
-                <div className="h-48 bg-secondary-200 rounded-lg mb-4"></div>
-                <div className="text-xs text-primary-600 font-semibold mb-2">
-                  {isRTL ? 'النقل' : 'TRANSPORTATION'}
+      <section className="py-16 px-6 sm:px-8 lg:px-12">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            {locale === 'ar' ? 'قصص' : 'Success'} <span className="text-gold-500">{locale === 'ar' ? 'النجاح' : 'Stories'}</span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                sector: { en: 'TRANSPORTATION', ar: 'النقل' },
+                title: { en: 'King Abdulaziz International Airport', ar: 'مطار الملك عبدالعزيز الدولي' },
+                description: {
+                  en: 'Design and supervision of airport expansion to accommodate 30 million passengers annually',
+                  ar: 'تصميم وإشراف على توسعة المطار لاستيعاب 30 مليون مسافر سنوياً'
+                }
+              },
+              {
+                sector: { en: 'HEALTHCARE', ar: 'الرعاية الصحية' },
+                title: { en: 'King Fahad Medical City', ar: 'مدينة الملك فهد الطبية' },
+                description: {
+                  en: 'Infrastructure and facilities for the largest medical city in the Middle East',
+                  ar: 'البنية التحتية والمرافق لأكبر مدينة طبية في الشرق الأوسط'
+                }
+              },
+              {
+                sector: { en: 'EDUCATION', ar: 'التعليم' },
+                title: { en: 'KAUST University', ar: 'جامعة الملك عبدالله للعلوم والتقنية' },
+                description: {
+                  en: 'Advanced research facilities and world-class scientific laboratories',
+                  ar: 'مرافق بحثية متطورة ومختبرات علمية عالمية المستوى'
+                }
+              }
+            ].map((story, index) => (
+              <div
+                key={index}
+                className="group relative bg-gradient-to-b from-gray-900 to-black rounded-xl overflow-hidden border border-gray-800 hover:border-gold-500/50 transition-all duration-500"
+              >
+                <div className="h-48 bg-gradient-to-br from-gray-800 to-gray-900"></div>
+                <div className="p-6">
+                  <div className="text-xs text-gold-500 font-bold uppercase tracking-wider mb-2">
+                    {story.sector[locale]}
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-gold-500 transition-colors">
+                    {story.title[locale]}
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    {story.description[locale]}
+                  </p>
                 </div>
-                <h3 className="font-semibold text-secondary-900 mb-2">
-                  {isRTL ? 'مطار الملك عبدالعزيز الدولي' : 'King Abdulaziz International Airport'}
-                </h3>
-                <p className="text-sm text-secondary-600">
-                  {isRTL
-                    ? 'تصميم وإشراف على توسعة المطار لاستيعاب 30 مليون مسافر سنوياً'
-                    : 'Design and supervision of airport expansion to accommodate 30 million passengers annually'}
-                </p>
-              </Card>
-
-              <Card>
-                <div className="h-48 bg-secondary-200 rounded-lg mb-4"></div>
-                <div className="text-xs text-primary-600 font-semibold mb-2">
-                  {isRTL ? 'الرعاية الصحية' : 'HEALTHCARE'}
-                </div>
-                <h3 className="font-semibold text-secondary-900 mb-2">
-                  {isRTL ? 'مدينة الملك فهد الطبية' : 'King Fahad Medical City'}
-                </h3>
-                <p className="text-sm text-secondary-600">
-                  {isRTL
-                    ? 'البنية التحتية والمرافق لأكبر مدينة طبية في الشرق الأوسط'
-                    : 'Infrastructure and facilities for the largest medical city in the Middle East'}
-                </p>
-              </Card>
-
-              <Card>
-                <div className="h-48 bg-secondary-200 rounded-lg mb-4"></div>
-                <div className="text-xs text-primary-600 font-semibold mb-2">
-                  {isRTL ? 'التعليم' : 'EDUCATION'}
-                </div>
-                <h3 className="font-semibold text-secondary-900 mb-2">
-                  {isRTL ? 'جامعة الملك عبدالله للعلوم والتقنية' : 'KAUST University'}
-                </h3>
-                <p className="text-sm text-secondary-600">
-                  {isRTL
-                    ? 'مرافق بحثية متطورة ومختبرات علمية عالمية المستوى'
-                    : 'Advanced research facilities and world-class scientific laboratories'}
-                </p>
-              </Card>
-            </div>
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-gold-600 to-gold-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">
-              {isRTL ? 'خبرة قطاعية تحقق نتائج' : 'Sector Expertise That Delivers Results'}
-            </h2>
-            <p className="text-xl mb-8 opacity-90">
-              {isRTL
-                ? 'اكتشف كيف يمكن لخبرتنا القطاعية أن تفيد مشروعك'
-                : 'Discover how our sector expertise can benefit your project'}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href={`/${locale}/projects`}>
-                <Button as="span" size="lg" variant="secondary">
-                  {isRTL ? 'عرض المشاريع' : 'View Projects'}
-                </Button>
-              </Link>
-              <Link href={`/${locale}/contact`}>
-                <Button as="span" size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary-700">
-                  {isRTL ? 'ناقش مشروعك' : 'Discuss Your Project'}
-                </Button>
-              </Link>
-            </div>
+      <section className="py-24 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-gold-500/5 to-transparent"></div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-4xl font-bold text-white mb-6">
+            {locale === 'ar' ? 'خبرة قطاعية تحقق نتائج' : 'Sector Expertise That Delivers Results'}
+          </h2>
+          <p className="text-xl text-gray-400 mb-8">
+            {locale === 'ar'
+              ? 'اكتشف كيف يمكن لخبرتنا القطاعية أن تفيد مشروعك'
+              : 'Discover how our sector expertise can benefit your project'
+            }
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href={`/${locale}/projects`}
+              className="group relative inline-flex items-center gap-3 bg-gradient-to-r from-gold-600 to-gold-500 text-black font-bold py-4 px-10 rounded-xl text-sm uppercase tracking-wider transition-all duration-500 hover:shadow-2xl hover:shadow-gold-500/40 hover:scale-105 overflow-hidden"
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-gold-400 to-gold-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+              <span className="relative">
+                {locale === 'ar' ? 'عرض المشاريع' : 'View Projects'}
+              </span>
+            </Link>
+            <Link
+              href={`/${locale}/contact`}
+              className="group relative inline-flex items-center gap-3 bg-transparent border-2 border-gold-500/50 text-gold-500 font-bold py-4 px-10 rounded-xl text-sm uppercase tracking-wider transition-all duration-500 hover:border-gold-500 hover:bg-gold-500/10 hover:scale-105"
+            >
+              {locale === 'ar' ? 'ناقش مشروعك' : 'Discuss Your Project'}
+            </Link>
           </div>
         </div>
       </section>

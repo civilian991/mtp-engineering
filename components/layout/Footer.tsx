@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Locale } from '@/lib/i18n'
 import { Phone, Mail, MapPin, Linkedin, Twitter } from 'lucide-react'
 
@@ -26,124 +27,80 @@ export default function Footer({ locale, dictionary }: FooterProps) {
   }
 
   return (
-    <footer className="bg-secondary-900 text-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="bg-black text-muted-300 border-t border-muted-600 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Company Info */}
           <div>
             <div className="mb-4">
-              <img
-                src="/images/mtp-logo-white-bg.png"
-                alt="MTP Engineering"
-                className="h-20 w-auto object-contain mb-2"
+              <Image
+                src="/images/mtp-logo.svg"
+                alt="MTP Logo - Mansour for Trade & Projects"
+                width={140}
+                height={70}
+                className="h-16 w-auto"
               />
-              <span className="text-sm font-medium text-primary-500">
-                {locale === 'ar' ? 'منصور للتجارة والمشاريع' : 'Mansour Trade & Projects'}
-              </span>
             </div>
-            <p className="text-secondary-300 mb-4">
+            <p className="text-sm">
               {locale === 'ar'
-                ? 'حيث يلتقي الأداء بالجودة - مقاول كهروميكانيكي منذ 1980'
-                : 'Where Performance Meets Quality - Electro-Mechanical Contractor Since 1980'}
+                ? 'مقاول كهروميكانيكي رائد منذ 1980'
+                : 'Leading electro‑mechanical contractor since 1980.'}
             </p>
-            <div className="flex space-x-4 rtl:space-x-reverse">
-              <a
-                href="#"
-                className="text-secondary-400 hover:text-primary-500 transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="text-secondary-400 hover:text-primary-500 transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
-          {/* Company Links */}
+          {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-primary-500">
-              {locale === 'ar' ? 'الشركة' : 'Company'}
-            </h3>
-            <ul className="space-y-2">
-              {footerLinks.company.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-secondary-400 hover:text-primary-500 transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Services Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-primary-500">{dictionary.navigation.services}</h3>
-            <ul className="space-y-2">
-              {footerLinks.services.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-secondary-400 hover:text-primary-500 transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
+            <h4 className="text-gold-500 font-semibold mb-2">
+              {locale === 'ar' ? 'روابط سريعة' : 'Quick Links'}
+            </h4>
+            <ul className="text-sm space-y-1">
+              <li>
+                <Link href={`/${locale}/projects`} className="hover:text-gold-500 transition-colors">
+                  {dictionary.navigation.projects}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${locale}/services`} className="hover:text-gold-500 transition-colors">
+                  {dictionary.navigation.services}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${locale}/careers`} className="hover:text-gold-500 transition-colors">
+                  {dictionary.navigation.careers}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${locale}/contact`} className="hover:text-gold-500 transition-colors">
+                  {dictionary.navigation.contact}
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-primary-500">{dictionary.navigation.contact}</h3>
-            <ul className="space-y-3">
-              <li className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-primary-500" />
-                <span className="text-secondary-400">
-                  {locale === 'ar' ? 'جدة، المملكة العربية السعودية' : 'Jeddah, Saudi Arabia'}
-                </span>
-              </li>
-              <li className="flex items-center">
-                <Phone className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-primary-500" />
-                <span className="text-primary-300" dir="ltr">
-                  +966 2 653 4098
-                </span>
-              </li>
-              <li className="flex items-center">
-                <Mail className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0 text-primary-500" />
-                <span className="text-secondary-400">info@mtpksa.com</span>
-              </li>
-            </ul>
+            <h4 className="text-gold-500 font-semibold mb-2">{dictionary.navigation.contact}</h4>
+            <p className="text-sm">
+              {locale === 'ar' ? 'المقر الرئيسي بجدة' : 'Jeddah Headquarters'}<br />
+              {locale === 'ar' ? 'المملكة العربية السعودية' : 'Saudi Arabia'}
+            </p>
+            <p className="text-sm mt-2">
+              {locale === 'ar' ? 'البريد الإلكتروني: ' : 'Email: '}
+              <a href="mailto:info@mtp.com.sa" className="hover:text-gold-500">
+                info@mtp.com.sa
+              </a>
+            </p>
+            <p className="text-sm">
+              {locale === 'ar' ? 'الهاتف: ' : 'Phone: '}
+              <a href="tel:+96612345678" className="hover:text-gold-500" dir="ltr">
+                +966 12 345 678
+              </a>
+            </p>
           </div>
         </div>
 
-        <div className="border-t border-secondary-700 mt-8 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-primary-400 text-sm">
-              © {currentYear} MTP Engineering Consultants. {dictionary.footer.rights}
-            </p>
-            <div className="flex space-x-6 rtl:space-x-reverse mt-4 md:mt-0">
-              <Link
-                href={`/${locale}/privacy`}
-                className="text-primary-400 hover:text-accent-500 text-sm transition-colors"
-              >
-                {dictionary.footer.privacy}
-              </Link>
-              <Link
-                href={`/${locale}/terms`}
-                className="text-primary-400 hover:text-accent-500 text-sm transition-colors"
-              >
-                {dictionary.footer.terms}
-              </Link>
-            </div>
-          </div>
+        <div className="mt-6 text-center text-xs text-muted-400">
+          © {currentYear} {locale === 'ar' ? 'منصور للتجارة والمشاريع' : 'Mansour for Trade & Projects'}. {dictionary.footer.rights}
         </div>
       </div>
     </footer>

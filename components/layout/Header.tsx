@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { Locale } from '@/lib/i18n'
@@ -13,6 +15,7 @@ interface HeaderProps {
 
 export default function Header({ locale, dictionary }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const pathname = usePathname()
 
   const navigation = [
     { name: dictionary.navigation.home, href: `/${locale}` },
@@ -25,30 +28,42 @@ export default function Header({ locale, dictionary }: HeaderProps) {
   ]
 
   return (
-    <header className="bg-white/95 backdrop-blur-sm border-b border-primary-100 sticky top-0 z-50">
-      <nav className="container mx-auto px-4 sm:px-8 lg:px-16">
-        <div className="flex justify-between h-20">
+    <header className="bg-black text-white border-b border-muted-600 sticky top-0 z-20">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href={`/${locale}`} className="flex-shrink-0 flex items-center group">
-              <img
-                src="/images/mtp-logo-professional.png"
-                alt="MTP Engineering"
-                className="h-20 w-auto object-contain py-2"
+            <Link href={`/${locale}`} className="flex-shrink-0 flex items-center">
+              <Image
+                src="/images/mtp-logo.svg"
+                alt="MTP Logo - Mansour for Trade & Projects"
+                width={140}
+                height={70}
+                className="h-12 w-auto"
+                priority
               />
+              <span className="sr-only">Mansour for Trade & Projects</span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-primary-700 hover:text-accent-600 px-3 py-2 text-sm font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-accent-600 after:scale-x-0 hover:after:scale-x-100 after:transition-transform"
-              >
-                {item.name}
-              </Link>
-            ))}
+          <div className="hidden md:flex items-center space-x-6 rtl:space-x-reverse text-sm font-medium">
+            {navigation.map((item) => {
+              const isActive = pathname === item.href || (item.href !== `/${locale}` && pathname.startsWith(item.href))
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`relative hover:text-gold-500 transition-colors ${
+                    isActive ? 'text-gold-500' : 'text-muted-200'
+                  }`}
+                >
+                  {item.name}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gold-500"></span>
+                  )}
+                </Link>
+              )
+            })}
             <LanguageSwitcher currentLocale={locale} />
           </div>
 
@@ -57,7 +72,7 @@ export default function Header({ locale, dictionary }: HeaderProps) {
             <LanguageSwitcher currentLocale={locale} />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="ml-4 rtl:mr-4 rtl:ml-0 inline-flex items-center justify-center p-2 rounded-md text-secondary-600 hover:text-primary-600 hover:bg-secondary-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+              className="ml-4 rtl:mr-4 rtl:ml-0 inline-flex items-center justify-center p-2 rounded-md text-muted-200 hover:text-gold-500 hover:bg-muted-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gold-500"
               aria-expanded={isMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
@@ -68,18 +83,23 @@ export default function Header({ locale, dictionary }: HeaderProps) {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-secondary-200 pb-3 pt-2">
+          <div className="md:hidden border-t border-muted-600 pb-3 pt-2">
             <div className="space-y-1">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="block px-3 py-2 text-base font-medium text-secondary-600 hover:text-primary-600 hover:bg-secondary-50 rounded-md"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigation.map((item) => {
+                const isActive = pathname === item.href || (item.href !== `/${locale}` && pathname.startsWith(item.href))
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`block px-3 py-2 text-base font-medium rounded-md transition-colors ${
+                      isActive ? 'text-gold-500 bg-muted-900' : 'text-muted-200 hover:text-gold-500 hover:bg-muted-900'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )
+              })}
             </div>
           </div>
         )}
