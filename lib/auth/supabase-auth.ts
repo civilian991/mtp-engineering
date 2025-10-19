@@ -145,7 +145,7 @@ export async function createAdminUser(
     id: data.user.id,
     email: data.user.email!,
     full_name: profile?.full_name || fullName,
-    role: profile?.role || role
+    role: (profile?.role || role) as User['role']
   }
 }
 
