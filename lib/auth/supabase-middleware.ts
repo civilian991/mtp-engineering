@@ -47,13 +47,16 @@ export async function withAuth(
 
       // Check role permissions
       if (options.requiredRole) {
-        const roleHierarchy = {
+        const roleHierarchy: Record<string, number> = {
           'super_admin': 3,
           'admin': 2,
           'editor': 1
         };
 
-        if (roleHierarchy[profile.role] < roleHierarchy[options.requiredRole]) {
+        const userRoleLevel = roleHierarchy[profile.role as string] || 0;
+        const requiredRoleLevel = roleHierarchy[options.requiredRole] || 0;
+
+        if (userRoleLevel < requiredRoleLevel) {
           return NextResponse.json(
             { error: 'Insufficient permissions' },
             { status: 403 }
