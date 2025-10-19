@@ -14,9 +14,11 @@ import {
   X,
   Building2,
   Mail,
-  NewspaperIcon
+  NewspaperIcon,
+  Shield
 } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import { useAuth } from '@/hooks/useAuth'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -36,25 +38,15 @@ export default function AdminLayout({
   const router = useRouter()
   const pathname = usePathname()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { user, loading, logout } = useAuth('/admin/login')
 
-  useEffect(() => {
-    // Check authentication
-    const auth = localStorage.getItem('adminAuth')
-    if (!auth && pathname !== '/admin/login') {
-      router.push('/admin/login')
-    } else if (auth) {
-      setIsAuthenticated(true)
-    }
-  }, [pathname, router])
-
-  const handleLogout = () => {
-    localStorage.removeItem('adminAuth')
-    router.push('/admin/login')
+  // Don't show layout for login page or while loading
+  if (pathname === '/admin/login' || loading) {
+    return <>{children}</>
   }
 
-  // Don't show layout for login page
-  if (pathname === '/admin/login' || !isAuthenticated) {
+  // If no user after loading, they'll be redirected by useAuth
+  if (!user) {
     return <>{children}</>
   }
 
@@ -108,8 +100,14 @@ export default function AdminLayout({
         </nav>
 
         <div className="border-t p-4">
+          <div className="mb-3 px-3 py-2">
+            <div className="flex items-center text-xs text-secondary-500">
+              <Shield className="h-4 w-4 mr-2" />
+              <span className="capitalize">{user.role.replace('_', ' ')}</span>
+            </div>
+          </div>
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="flex items-center w-full px-3 py-2 text-sm font-medium text-secondary-700 rounded-lg hover:bg-secondary-100 transition-colors"
           >
             <LogOut className="h-5 w-5 mr-3" />
@@ -133,7 +131,7 @@ export default function AdminLayout({
               {navigation.find(item => item.href === pathname)?.name || 'Admin'}
             </h1>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-secondary-600">admin@mtp.com</span>
+              <span className="text-sm text-secondary-600">{user.email}</span>
             </div>
           </div>
         </header>

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { checkAdminAuth } from '@/lib/auth/supabase-middleware'
 
 const locales = ['en', 'ar']
 const defaultLocale = 'en'
@@ -20,6 +21,14 @@ function getLocale(request: NextRequest): string {
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
+
+  // Check admin authentication for protected routes
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+    const isAuthenticated = checkAdminAuth(request)
+    if (!isAuthenticated) {
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+  }
 
   // Skip locale redirection for admin routes and manifest
   if (pathname.startsWith('/admin') || pathname.endsWith('.webmanifest')) {

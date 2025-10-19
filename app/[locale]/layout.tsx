@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { getDictionary } from '@/lib/dictionary'
 import { Locale } from '@/lib/i18n'
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
 
 // Force dynamic rendering globally to avoid SSG event handler issues with Next.js 15 + React 19
 export const dynamic = 'force-dynamic'
@@ -56,6 +57,9 @@ export default async function RootLayout({ children, params }: Props) {
   return (
     <html lang={locale} dir={dir}>
       <body className={`${inter.className} min-h-screen flex flex-col`}>
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gtag_id={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
         <Header locale={locale as Locale} dictionary={dictionary} />
         <main className="flex-1">{children}</main>
         <Footer locale={locale as Locale} dictionary={dictionary} />

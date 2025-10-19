@@ -1,4 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { sendEmailNotification } from '@/lib/email/send'
+import { strictRateLimit } from '@/lib/rate-limit'
 
 interface ContactFormData {
   name: string
@@ -10,8 +13,28 @@ interface ContactFormData {
   message: string
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    // Apply rate limiting
+    const rateLimitResult = strictRateLimit.check(request)
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          error: 'Too many requests. Please try again later.',
+          retryAfter: rateLimitResult.resetTime - Date.now()
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+            'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+            'X-RateLimit-Reset': new Date(rateLimitResult.resetTime).toISOString(),
+            'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString()
+          }
+        }
+      )
+    }
+
     const body: ContactFormData = await request.json()
 
     // Validate required fields
@@ -31,28 +54,63 @@ export async function POST(request: Request) {
       )
     }
 
-    // Here you would typically:
-    // 1. Save to database
-    // 2. Send email notification
-    // 3. Integrate with CRM
+    // Get Supabase client
+    const supabase = await createClient()
 
-    // For now, we'll simulate success
-    console.log('Contact form submission:', body)
+    // Save to database
+    const { data, error } = await supabase
+      .from('inquiries')
+      .insert({
+        name: body.name,
+        email: body.email,
+        phone: body.phone || null,
+        company: body.company || null,
+        subject: body.subject || null,
+        inquiry_type: body.inquiry_type || 'general',
+        message: body.message,
+        status: 'pending'
+      })
+      .select()
+      .single()
 
-    // In production, you might send an email using a service like SendGrid
-    // await sendEmail({
-    //   to: 'admin@mtp.com.sa',
-    //   subject: `New inquiry from ${body.name}`,
-    //   body: formatEmailBody(body)
-    // })
+    if (error) {
+      console.error('Database error:', error)
+      return NextResponse.json(
+        { error: 'Failed to save inquiry' },
+        { status: 500 }
+      )
+    }
 
-    return NextResponse.json(
+    // Send email notification (non-blocking)
+    sendEmailNotification({
+      to: process.env.ADMIN_EMAIL || 'admin@mtp.com.sa',
+      subject: `New inquiry from ${body.name}`,
+      template: 'inquiry',
+      data: {
+        ...body,
+        inquiryId: data.id,
+        date: new Date().toLocaleDateString()
+      }
+    }).catch(error => {
+      console.error('Email notification failed:', error)
+      // Don't fail the request if email fails
+    })
+
+    const response = NextResponse.json(
       {
         success: true,
-        message: 'Your inquiry has been received. We will contact you soon.'
+        message: 'Your inquiry has been received. We will contact you soon.',
+        inquiry_id: data.id
       },
       { status: 200 }
     )
+
+    // Add rate limit headers
+    response.headers.set('X-RateLimit-Limit', rateLimitResult.limit.toString())
+    response.headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString())
+    response.headers.set('X-RateLimit-Reset', new Date(rateLimitResult.resetTime).toISOString())
+
+    return response
   } catch (error) {
     console.error('Contact form error:', error)
     return NextResponse.json(

@@ -21,16 +21,29 @@ export default function AdminLoginPage() {
     setError('')
     setIsLoading(true)
 
-    // Simulate authentication
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password
+        })
+      })
 
-    // For demo purposes, accept admin@mtp.com / admin123
-    if (credentials.email === 'admin@mtp.com' && credentials.password === 'admin123') {
-      // Set admin session (in production, this would be JWT/session)
-      localStorage.setItem('adminAuth', 'true')
-      router.push('/admin/dashboard')
-    } else {
-      setError('Invalid email or password')
+      const data = await response.json()
+
+      if (response.ok) {
+        // Store user info in localStorage for client-side access
+        localStorage.setItem('adminUser', JSON.stringify(data.user))
+        router.push('/admin/dashboard')
+        router.refresh() // Refresh to update server components
+      } else {
+        setError(data.error || 'Invalid credentials')
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      setError('An error occurred. Please try again.')
     }
 
     setIsLoading(false)
@@ -62,7 +75,7 @@ export default function AdminLoginPage() {
             icon={<User className="h-5 w-5 text-secondary-400" />}
             value={credentials.email}
             onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-            placeholder="admin@mtp.com"
+            placeholder="your.email@mtp.com.sa"
             required
           />
 
@@ -89,7 +102,7 @@ export default function AdminLoginPage() {
 
         <div className="mt-6 pt-6 border-t border-secondary-200">
           <p className="text-center text-sm text-secondary-600">
-            For demo: admin@mtp.com / admin123
+            Contact your administrator for login credentials
           </p>
         </div>
       </Card>

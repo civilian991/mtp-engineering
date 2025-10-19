@@ -1,4 +1,22 @@
 User-agent: *
 Allow: /
 
+# Block admin areas
+Disallow: /admin/
+Disallow: /api/
+
+# Block temporary or development files
+Disallow: /_next/
+Disallow: /*.json
+Disallow: /private/
+
+# Allow important assets
+Allow: /images/
+Allow: /icons/
+Allow: /favicon.ico
+
+# Sitemap
 Sitemap: https://mtp.com.sa/sitemap.xml
+
+# Crawl delay for good measure
+Crawl-delay: 1

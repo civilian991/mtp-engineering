@@ -1,0 +1,199 @@
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
+
+const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'your-secret-key-change-in-production';
+const JWT_EXPIRES_IN = '24h';
+const COOKIE_NAME = 'mtp-admin-token';
+
+export interface User {
+  id: string;
+  email: string;
+  full_name: string | null;
+  role: 'super_admin' | 'admin' | 'editor';
+}
+
+export interface AuthToken {
+  user: User;
+  expires_at: string;
+}
+
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 10);
+}
+
+export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+  return bcrypt.compare(password, hashedPassword);
+}
+
+export function generateToken(user: User): string {
+  return jwt.sign(
+    {
+      user: {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+        role: user.role
+      }
+    },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+}
+
+export function verifyToken(token: string): AuthToken | null {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    return {
+      user: decoded.user,
+      expires_at: new Date(decoded.exp * 1000).toISOString()
+    };
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function login(email: string, password: string, ip?: string, userAgent?: string) {
+  const supabase = await createClient();
+
+  // Fetch user from database
+  const { data: user, error } = await supabase
+    .from('admin_users')
+    .select('*')
+    .eq('email', email)
+    .eq('is_active', true)
+    .single();
+
+  if (error || !user) {
+    throw new Error('Invalid credentials');
+  }
+
+  // Verify password
+  const isValidPassword = await verifyPassword(password, user.password_hash);
+  if (!isValidPassword) {
+    throw new Error('Invalid credentials');
+  }
+
+  // Update last login
+  await supabase
+    .from('admin_users')
+    .update({ last_login_at: new Date().toISOString() })
+    .eq('id', user.id);
+
+  // Generate token
+  const token = generateToken({
+    id: user.id,
+    email: user.email,
+    full_name: user.full_name,
+    role: user.role
+  });
+
+  // Store session in database
+  const tokenHash = await bcrypt.hash(token, 5);
+  const expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + 24);
+
+  await supabase.from('admin_sessions').insert({
+    user_id: user.id,
+    token_hash: tokenHash,
+    expires_at: expiresAt.toISOString(),
+    ip_address: ip,
+    user_agent: userAgent
+  });
+
+  // Log the login action
+  await logAuditAction(user.id, 'LOGIN', 'admin_users', user.id, { email }, ip);
+
+  return { token, user: { id: user.id, email: user.email, full_name: user.full_name, role: user.role } };
+}
+
+export async function logout(userId: string, token: string) {
+  const supabase = createClient();
+
+  // Remove all sessions for this user
+  await supabase
+    .from('admin_sessions')
+    .delete()
+    .eq('user_id', userId);
+
+  // Log the logout action
+  await logAuditAction(userId, 'LOGOUT', 'admin_users', userId);
+}
+
+export async function getCurrentUser(token: string): Promise<User | null> {
+  const decoded = verifyToken(token);
+  if (!decoded) return null;
+
+  const supabase = createClient();
+
+  // Verify user still exists and is active
+  const { data: user } = await supabase
+    .from('admin_users')
+    .select('*')
+    .eq('id', decoded.user.id)
+    .eq('is_active', true)
+    .single();
+
+  if (!user) return null;
+
+  return {
+    id: user.id,
+    email: user.email,
+    full_name: user.full_name,
+    role: user.role
+  };
+}
+
+export async function setAuthCookie(token: string) {
+  const cookieStore = await cookies();
+  cookieStore.set(COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24, // 24 hours
+    path: '/'
+  });
+}
+
+export async function removeAuthCookie() {
+  const cookieStore = await cookies();
+  cookieStore.delete(COOKIE_NAME);
+}
+
+export async function getAuthCookie(): Promise<string | undefined> {
+  const cookieStore = await cookies();
+  return cookieStore.get(COOKIE_NAME)?.value;
+}
+
+export async function logAuditAction(
+  userId: string | null,
+  action: string,
+  entityType?: string,
+  entityId?: string,
+  details?: any,
+  ipAddress?: string
+) {
+  const supabase = createClient();
+
+  await supabase.from('admin_audit_log').insert({
+    user_id: userId,
+    action,
+    entity_type: entityType,
+    entity_id: entityId,
+    details,
+    ip_address: ipAddress
+  });
+}
+
+export function hasPermission(user: User | null, requiredRole: 'super_admin' | 'admin' | 'editor'): boolean {
+  if (!user) return false;
+
+  const roleHierarchy = {
+    'super_admin': 3,
+    'admin': 2,
+    'editor': 1
+  };
+
+  return roleHierarchy[user.role] >= roleHierarchy[requiredRole];
+}

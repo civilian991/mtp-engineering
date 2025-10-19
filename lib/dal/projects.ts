@@ -247,11 +247,160 @@ export async function getProjectStats() {
   return stats
 }
 
-// Note: The following functions are commented out because their tables don't exist in the database
-// - getProjectBySlug (slug field doesn't exist)
-// - getProjectsByService (project_services table doesn't exist)
-// - getLegacyProjects (is_legacy field doesn't exist)
-// - getProjectCities (city_en, city_ar fields don't exist)
-// - incrementProjectViews (RPC function doesn't exist)
-// - addProjectImage (project_images table doesn't exist)
-// - addProjectDocument (project_documents table doesn't exist)
+// Get project by slug - Disabled until slug field is added to database types
+/*
+export const getProjectBySlug = cache(async (slug: string) => {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('slug', slug)
+    .single()
+
+  if (error) {
+    console.error('Error fetching project by slug:', error)
+    return null
+  }
+
+  return data
+})
+*/
+
+// Get projects by service - Disabled until project_services table is added to database types
+/*
+export const getProjectsByService = cache(async (serviceId: string) => {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('project_services')
+    .select(`
+      project_id,
+      projects (*)
+    `)
+    .eq('service_id', serviceId)
+
+  if (error) {
+    console.error('Error fetching projects by service:', error)
+    return []
+  }
+
+  return data?.map(item => (item as any).projects).filter(Boolean) || []
+})
+*/
+
+// Get legacy projects - Disabled until is_legacy field is added to database types
+/*
+export const getLegacyProjects = cache(async (limit?: number) => {
+  const supabase = await createClient()
+
+  let query = supabase
+    .from('projects')
+    .select('*')
+    .eq('is_legacy', true)
+    .order('year', { ascending: false })
+
+  if (limit) query = query.limit(limit)
+
+  const { data, error } = await query
+
+  if (error) {
+    console.error('Error fetching legacy projects:', error)
+    return []
+  }
+
+  return data || []
+})
+*/
+
+// Get unique project cities - Disabled until city field is added to database types
+/*
+export const getProjectCities = cache(async () => {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('projects')
+    .select('city')
+    .not('city', 'is', null)
+
+  if (error) {
+    console.error('Error fetching project cities:', error)
+    return []
+  }
+
+  // Get unique cities
+  const cities = [...new Set(data?.map(p => p.city).filter(Boolean) || [])]
+  return cities
+})
+*/
+
+// Increment project views - Disabled until RPC function is added to database
+/*
+export async function incrementProjectViews(projectId: string) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.rpc('increment_project_views', {
+    project_id: projectId
+  })
+
+  if (error) {
+    console.error('Error incrementing project views:', error)
+  }
+}
+*/
+
+// Add project image - Disabled until project_images table is added to database types
+/*
+export async function addProjectImage(projectId: string, imageData: {
+  image_url: string
+  caption_en?: string
+  caption_ar?: string
+  is_primary?: boolean
+}) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('project_images')
+    .insert({
+      project_id: projectId,
+      ...imageData
+    })
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error adding project image:', error)
+    throw error
+  }
+
+  return data
+}
+*/
+
+// Add project document - Disabled until project_documents table is added to database types
+/*
+export async function addProjectDocument(projectId: string, documentData: {
+  document_url: string
+  document_name?: string
+  document_type?: string
+  file_size?: number
+}) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('project_documents')
+    .insert({
+      project_id: projectId,
+      ...documentData
+    })
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error adding project document:', error)
+    throw error
+  }
+
+  return data
+}
+*/
