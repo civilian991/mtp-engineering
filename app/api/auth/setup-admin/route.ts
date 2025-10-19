@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         .from('admin_profiles')
         .insert({
           id: data.user.id,
-          email: data.user.email,
+          email: data.user.email || email,
           full_name: 'System Administrator',
           role: 'super_admin',
           is_active: true
