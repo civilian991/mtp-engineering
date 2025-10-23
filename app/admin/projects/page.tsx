@@ -101,7 +101,6 @@ export default function ProjectsManagement() {
     budget: 0,
     actual_cost: 0,
     area_size: 0,
-    year: new Date().getFullYear(),
     images: [],
     documents: [],
     videos: [],
@@ -219,8 +218,7 @@ export default function ProjectsManagement() {
       project_value: project.project_value ?? 0,
       budget: project.budget ?? 0,
       actual_cost: project.actual_cost ?? 0,
-      area_size: project.area_size ?? 0,
-      year: project.year ?? new Date().getFullYear()
+      area_size: project.area_size ?? 0
     })
     setShowForm(true)
   }
@@ -254,7 +252,6 @@ export default function ProjectsManagement() {
       budget: 0,
       actual_cost: 0,
       area_size: 0,
-      year: new Date().getFullYear(),
       images: [],
       documents: [],
       videos: [],
