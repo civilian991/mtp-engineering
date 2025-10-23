@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Locale } from '@/lib/i18n'
+import ProjectSketch from '@/components/ProjectSketch'
 
 interface HomePageProps {
   locale: Locale
@@ -128,74 +129,86 @@ function HistorySection({ locale, projects }: { locale: Locale; projects: any[] 
   const [selectedEra, setSelectedEra] = useState<string | null>(null)
   const isRTL = locale === 'ar'
 
-  // Group projects by decade and select representative projects
+  // Get 4 actual projects from the database
   const getProjectsByEra = () => {
-    // Filter projects by decade
-    const projects2010s = projects.filter(p => p.year >= 2010 && p.year < 2020)
-    const projects2020s = projects.filter(p => p.year >= 2020 && p.year < 2030)
+    // If no projects available, return empty array
+    if (!projects || projects.length === 0) {
+      return []
+    }
 
-    // Select showcase projects - prioritize different types/sectors for variety
-    const showcaseProjects = [
-      // For historical eras without data, use representative placeholder
-      {
-        era: '1980s',
-        title: 'Early Infrastructure Projects',
-        title_ar: 'مشاريع البنية التحتية المبكرة',
-        value: '12 M SAR',
-        src: '/images/infrastructure.png',
-        projectId: null,
-      },
-      // 2010s - Pick a significant project
-      projects2010s.find(p => p.name_en?.includes('High Speed Rail')) || projects2010s[0] || {
-        era: '2010s',
-        title: 'Major Development Era',
-        title_ar: 'عصر التطوير الكبير',
-        value: '90 M SAR',
-        src: '/images/mega-project.png',
-        projectId: null,
-      },
-      // 2020s - Pick KAFD as flagship
-      projects2020s.find(p => p.name_en?.includes('King Abdullah Financial')) || projects2020s[0] || {
-        era: '2020s',
-        title: 'Vision 2030 Projects',
-        title_ar: 'مشاريع رؤية 2030',
-        value: '150 M SAR',
-        src: '/images/smart-cities.png',
-        projectId: null,
-      },
-      // Another 2010s project for variety
-      projects2010s.find(p => p.name_en?.includes('Medical City')) || projects2010s[1] || {
-        era: '2010s',
-        title: 'Healthcare Excellence',
-        title_ar: 'التميز في الرعاية الصحية',
-        value: '75 M SAR',
-        src: '/images/hospital.png',
-        projectId: null,
+    // Prioritize featured projects, then sort by year
+    const sortedProjects = [...projects]
+      .sort((a, b) => {
+        // Featured projects first
+        if (a.is_featured && !b.is_featured) return -1
+        if (!a.is_featured && b.is_featured) return 1
+        // Then by year (newest first)
+        return (b.year || 0) - (a.year || 0)
+      })
+
+    // Take first 4 projects
+    const selectedProjects = sortedProjects.slice(0, 4)
+
+    // Format the projects for display
+    const formattedProjects = selectedProjects.map(project => {
+      // Determine era based on year
+      let era = '2020s'
+      if (project.year) {
+        if (project.year >= 2020) era = '2020s'
+        else if (project.year >= 2010) era = '2010s'
+        else if (project.year >= 2000) era = '2000s'
+        else if (project.year >= 1990) era = '1990s'
+        else era = '1980s'
       }
-    ]
 
-    // Format the selected projects properly
-    const formattedProjects = showcaseProjects.map(item => {
-      if (item.name_en) {
-        // This is a real project from database
-        return {
-          era: item.year >= 2020 ? '2020s' : '2010s',
-          title: item.name_en,
-          title_ar: item.name_ar,
-          value: item.value ? `${(item.value / 1000000).toFixed(0)} M SAR` : '85 M SAR',
-          src: `/images/${item.year >= 2020 ? 'smart-cities' : item.name_en.toLowerCase().includes('medical') || item.name_en.toLowerCase().includes('hospital') ? 'hospital' : 'mega-project'}.png`,
-          projectId: item.id,
+      // Generate unique variant (1-20) based on project ID for consistency
+      // This ensures the same project always gets the same sketch
+      const generateVariant = (id: string): number => {
+        // Simple hash function to convert UUID to number
+        let hash = 0
+        for (let i = 0; i < id.length; i++) {
+          hash = ((hash << 5) - hash) + id.charCodeAt(i)
+          hash = hash & hash // Convert to 32-bit integer
         }
+        // Return a number between 1-20
+        return Math.abs(hash % 20) + 1
       }
-      // Return placeholder as is
-      return item
+
+      const variant = generateVariant(project.id)
+
+      // Create short description (first 60 characters)
+      const shortDesc = project.description_en
+        ? (project.description_en.length > 60
+          ? project.description_en.substring(0, 60) + '...'
+          : project.description_en)
+        : (project.sector || 'Engineering Excellence')
+
+      const shortDescAr = project.description_ar
+        ? (project.description_ar.length > 60
+          ? project.description_ar.substring(0, 60) + '...'
+          : project.description_ar)
+        : (project.sector || 'التميز الهندسي')
+
+      return {
+        era,
+        title: project.name_en || 'Project',
+        title_ar: project.name_ar || project.name_en || 'مشروع',
+        value: project.value ? `${(project.value / 1000000).toFixed(0)} M SAR` : shortDesc,
+        value_ar: project.value ? `${(project.value / 1000000).toFixed(0)} ريال سعودي` : shortDescAr,
+        variant,
+        projectId: project.id,
+      }
     })
 
-    // Don't reverse - let CSS handle RTL layout
     return formattedProjects
   }
 
   const items = getProjectsByEra()
+
+  // If no items, don't render the section
+  if (items.length === 0) {
+    return null
+  }
 
   return (
     <section className="bg-gradient-to-b from-black via-black/95 to-black py-16 px-6 sm:px-8 lg:px-12 relative overflow-hidden">
@@ -240,16 +253,13 @@ function HistorySection({ locale, projects }: { locale: Locale; projects: any[] 
                 onMouseEnter={() => setSelectedEra(cardKey)}
                 onMouseLeave={() => setSelectedEra(null)}
               >
-              <div className="relative h-52 w-full overflow-hidden bg-gradient-to-br from-gold-500/10 to-transparent">
-                <Image
-                  src={item.src}
-                  alt={`${item.title} project from the ${item.era}`}
-                  fill
-                  className="object-cover opacity-60 group-hover:opacity-90 group-hover:scale-115 transition-all duration-700 ease-out"
-                />
+              <div className="relative h-52 w-full overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black">
+                <div className="absolute inset-0 flex items-center justify-center opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out">
+                  <ProjectSketch variant={item.variant} className="w-full h-full" />
+                </div>
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-90"></div>
-                <div className="absolute inset-0 bg-gradient-to-br from-gold-500/0 to-gold-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-gold-500/0 to-gold-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                 <div className="absolute top-4 right-4 bg-gradient-to-r from-gold-600 to-gold-500 text-black font-bold text-xs px-3 py-2 rounded-lg shadow-xl transform rotate-3 group-hover:rotate-0 transition-transform duration-500">
                   <span className="relative z-10">{item.era}</span>
@@ -267,13 +277,30 @@ function HistorySection({ locale, projects }: { locale: Locale; projects: any[] 
                 </h3>
 
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-2xl font-bold text-gold-500 group-hover:text-gold-400 transition-colors">
-                      {item.value.split(' ')[0]}
-                    </p>
-                    <p className="text-xs text-gold-500/70 uppercase tracking-wider mt-1">
-                      {item.value.split(' ').slice(1).join(' ')}
-                    </p>
+                  <div className="flex-1 mr-4">
+                    {(() => {
+                      const displayValue = locale === 'ar' && item.value_ar ? item.value_ar : item.value
+                      const isMonetary = displayValue.includes('SAR') || displayValue.includes('ريال')
+
+                      if (isMonetary) {
+                        return (
+                          <>
+                            <p className="text-2xl font-bold text-gold-500 group-hover:text-gold-400 transition-colors">
+                              {displayValue.split(' ')[0]}
+                            </p>
+                            <p className="text-xs text-gold-500/70 uppercase tracking-wider mt-1">
+                              {displayValue.split(' ').slice(1).join(' ')}
+                            </p>
+                          </>
+                        )
+                      } else {
+                        return (
+                          <p className="text-sm text-gold-500/90 leading-relaxed">
+                            {displayValue}
+                          </p>
+                        )
+                      }
+                    })()}
                   </div>
 
                   <div className="relative">
