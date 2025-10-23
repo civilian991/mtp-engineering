@@ -1,12 +1,14 @@
 'use client'
 
+import React from 'react'
+
 interface ProjectSketchProps {
   variant: number // 1-20+ for different unique sketches
   className?: string
 }
 
 export default function ProjectSketch({ variant, className = '' }: ProjectSketchProps) {
-  const sketches: { [key: number]: JSX.Element } = {
+  const sketches: { [key: number]: React.ReactElement } = {
     1: ( // Modern Tower
       <svg viewBox="0 0 400 300" className={className} xmlns="http://www.w3.org/2000/svg">
         <defs>
