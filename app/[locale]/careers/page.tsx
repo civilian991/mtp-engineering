@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { Locale } from '@/lib/i18n'
 import Link from 'next/link'
-import { Briefcase, MapPin, Clock, DollarSign, Users, TrendingUp, Heart, Sparkles, ChevronRight } from 'lucide-react'
+import { Briefcase, MapPin, Clock, Users, TrendingUp, Heart, Sparkles, ChevronRight } from 'lucide-react'
 
 // Mock data
 const mockJobs = [
@@ -15,7 +15,6 @@ const mockJobs = [
     location: { en: 'Riyadh', ar: 'الرياض' },
     employment_type: 'full-time',
     experience_level: 'senior',
-    salary_range: '15,000 - 25,000 SAR',
     posted_date: '2024-01-15',
     description: {
       en: 'Lead civil engineering projects with a focus on infrastructure development',
@@ -29,7 +28,6 @@ const mockJobs = [
     location: { en: 'Jeddah', ar: 'جدة' },
     employment_type: 'full-time',
     experience_level: 'senior',
-    salary_range: '20,000 - 30,000 SAR',
     posted_date: '2024-01-10',
     description: {
       en: 'Oversee large-scale engineering projects from inception to completion',
@@ -43,7 +41,6 @@ const mockJobs = [
     location: { en: 'Riyadh', ar: 'الرياض' },
     employment_type: 'full-time',
     experience_level: 'entry',
-    salary_range: '8,000 - 12,000 SAR',
     posted_date: '2024-01-20',
     description: {
       en: 'Support structural design and analysis for various construction projects',
@@ -57,7 +54,6 @@ const mockJobs = [
     location: { en: 'Dammam', ar: 'الدمام' },
     employment_type: 'full-time',
     experience_level: 'mid',
-    salary_range: '7,000 - 10,000 SAR',
     posted_date: '2024-01-18',
     description: {
       en: 'Create detailed technical drawings and 3D models for engineering projects',
@@ -91,14 +87,6 @@ export default function CareersPage() {
   }
 
   const benefits = [
-    {
-      icon: DollarSign,
-      title: { en: 'Competitive Salary', ar: 'راتب تنافسي' },
-      description: {
-        en: 'Industry-leading compensation packages',
-        ar: 'حزم تعويضات رائدة في الصناعة'
-      }
-    },
     {
       icon: Heart,
       title: { en: 'Health Insurance', ar: 'تأمين صحي' },
@@ -183,7 +171,7 @@ export default function CareersPage() {
           <h2 className="text-4xl font-bold text-center mb-12">
             {locale === 'ar' ? 'لماذا' : 'Why'} <span className="text-gold-500">MTP?</span>
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map((benefit, index) => {
               const Icon = benefit.icon
               return (
@@ -245,10 +233,6 @@ export default function CareersPage() {
                         <div className="flex items-center text-gray-300">
                           <Clock className="w-4 h-4 mr-2 text-gold-500/70" />
                           {employmentTypes[job.employment_type][locale]}
-                        </div>
-                        <div className="flex items-center text-gray-300">
-                          <DollarSign className="w-4 h-4 mr-2 text-gold-500/70" />
-                          {job.salary_range}
                         </div>
                       </div>
                       <div className="flex gap-2 mt-4">
